@@ -821,11 +821,11 @@ body {
 
 /* Our Work Page Styles */
 .our-work-page {
-    margin-top: 72px;
+    margin-top: var(--header-height);
     padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 4vw, 3rem);
     background: #173633;
     color: white;
-    min-height: calc(100vh - 72px);
+    min-height: calc(100vh - var(--header-height));
 }
 
 .our-work-container {
@@ -1042,11 +1042,11 @@ body {
 
 /* Team Page Styles */
 .team-page {
-    margin-top: 72px;
+    margin-top: var(--header-height);
     padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 4vw, 4rem);
     background: #173633;
     color: white;
-    min-height: calc(100vh - 72px);
+    min-height: calc(100vh - var(--header-height));
 }
 
 .team-container {

@@ -3,7 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rentals - Rainscope Filmworks</title>
+    <title>Film Equipment Rentals - Camera, Lighting & Audio Gear | Rainscope Filmworks</title>
+    <meta name="description" content="Rent professional film equipment in Vancouver, BC. Cameras, lighting, audio gear, and production equipment available for rent. Reliable, well-maintained gear at competitive rates.">
+    <meta name="keywords" content="film equipment rental, camera rental Vancouver, lighting equipment rental, audio gear rental, production equipment rental, BC film rentals">
+    <link rel="canonical" href="https://rainscopefilmworks.com/rentals.html">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rainscopefilmworks.com/rentals.html">
+    <meta property="og:title" content="Film Equipment Rentals | Rainscope Filmworks">
+    <meta property="og:description" content="Rent professional film equipment in Vancouver, BC. Cameras, lighting, audio gear, and production equipment available.">
+    <meta property="og:image" content="https://rainscopefilmworks.com/assets/images/logo.png">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://rainscopefilmworks.com/rentals.html">
+    <meta name="twitter:title" content="Film Equipment Rentals | Rainscope Filmworks">
+    <meta name="twitter:description" content="Rent professional film equipment in Vancouver, BC. Cameras, lighting, audio gear, and production equipment available.">
+    <meta name="twitter:image" content="https://rainscopefilmworks.com/assets/images/logo.png">
+    
     <link rel="stylesheet" href="assets/css/styles.css">
     <style>
     /* Rentals App Styles */
@@ -28,7 +46,18 @@
       padding-left: calc(20px + env(safe-area-inset-left));
       padding-right: calc(20px + env(safe-area-inset-right));
     }
+    
+    /* Remove shell padding on desktop for full-width */
+    @media (min-width: 961px) {
+      .rentals-wrapper .rs-shell{
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
 
+    /* global padding around everything - removed for edge-to-edge on desktop */
+    .rentals-wrapper #rs-app{ padding:0; }
+    
     /* >>> Full-bleed on mobile: apply to the GRID PARENT so Squarespace gutters don't constrain it */
     @media (max-width:960px){
       .rentals-wrapper #rs-app{
@@ -36,15 +65,19 @@
         max-width:100vw;
         margin-left:calc(50% - 50vw);
         margin-right:calc(50% - 50vw);
+        padding-left:10px;
+        padding-right:10px;
       }
     }
 
-    /* global 10px padding around everything */
-    .rentals-wrapper #rs-app{ padding:10px; }
-
     /* Layout grid */
-    .rentals-wrapper #rs-app{display:grid;gap:var(--rs-gap);padding-top:var(--rs-gap);padding-bottom:var(--rs-gap);
-      grid-template-columns:260px 1fr 420px; grid-template-rows:56px 1fr;
+    .rentals-wrapper #rs-app{
+      display:grid;
+      gap:var(--rs-gap);
+      padding-top:var(--rs-gap);
+      padding-bottom:var(--rs-gap);
+      grid-template-columns:260px 1fr 420px;
+      grid-template-rows:56px 1fr;
       grid-template-areas:"top top cart" "cats items cart";
     }
 
@@ -201,9 +234,7 @@
       border-radius:var(--rs-radius);
       display:flex;
       flex-direction:column;
-      position:sticky;
-      top:var(--rs-gap);
-      max-height:calc(100vh - 32px);
+      position:relative;
       overflow:hidden;
       z-index:var(--z-shell);
     }
@@ -385,16 +416,20 @@
 
    /* Page content wrapper */
    .page-content {
-     margin-top: 72px;
-     padding: 2rem 1rem;
+     margin-top: clamp(166px, calc(150px + 1rem), 180px);
+     padding: 4rem 0 2rem 0;
      background: #173633;
      color: white;
-     min-height: calc(100vh - 72px);
+     min-height: calc(100vh - clamp(166px, calc(150px + 1rem), 180px));
    }
 
    .rentals-wrapper {
-     max-width: 1800px;
-     margin: 0 auto;
+     width: 100%;
+     margin: 0;
+   }
+   
+   .rentals-wrapper h1 {
+     padding: 0 1rem;
    }
     </style>
 </head>
@@ -413,7 +448,7 @@
             <div class="nav-overlay" id="nav-overlay"></div>
             <nav class="nav" id="main-nav">
                 <a href="our-work.html" class="nav-link">Our work</a>
-                <a href="rentals.html" class="nav-link">Rentals</a>
+                <a href="rentals.html" class="nav-link active">Rentals</a>
                 <a href="our-team.html" class="nav-link">Our team</a>
                 <a href="contact.html" class="nav-link">Contact us</a>
             </nav>
@@ -423,7 +458,7 @@
     <!-- Main Content -->
     <main class="page-content">
         <div class="rentals-wrapper">
-            <h1 style="font-size: clamp(2rem, 4vw, 3.5rem); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 2rem; text-align: center; color: white;">Rentals</h1>
+            
             
             <div id="rs-app" class="rs">
               <header class="rs-top rs-shell">
@@ -498,8 +533,8 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
-            <div class="footer-section">
-                <h4>Location</h4>
+            <div class="footer-section footer-location">
+                <h4>LOCATION</h4>
                 <div class="map-container">
                     <iframe 
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2602.1234567890!2d-123.0806155!3d49.2683796!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDnCsDE2JzA2LjIiTiAxMjPCsDA0JzUwLjIiVw!5e0!3m2!1sen!2sca!4v1234567890123!5m2!1sen!2sca" 
@@ -513,29 +548,26 @@
                 </div>
                 <p>1868 Glen Dr #235<br>Vancouver, BC, V6A 4K4</p>
             </div>
-            <div class="footer-section">
-                <h4>Hours</h4>
-                <p>Monday — Friday<br>9am — 5pm</p>
-                <p>Saturday — Sunday<br>Upon request</p>
+            <div class="footer-section footer-hours">
+                <h4>HOURS</h4>
+                <p>Monday - Friday<br>9am - 5pm</p>
+                <p>Saturday - Sunday<br>Upon request</p>
             </div>
-            <div class="footer-section">
-                <h4>Contact</h4>
+            <div class="footer-section footer-contact">
+                <h4>CONTACT</h4>
                 <p>
-                    <a href="mailto:Hello@rainscopefilmworks.com">Hello@rainscopefilmworks.com</a><br>
-                    <a href="mailto:rentals@rainscopefilmworks.com">rentals@rainscopefilmworks.com</a>
+                    <a href="mailto:Hello@rainscopefilmworks.com">Hello@Rainscopefilmworks.com</a><br>
+                    <a href="mailto:rentals@rainscopefilmworks.com">Rentals@RainscopeFilmworks.com</a>
                 </p>
-            </div>
-            <div class="footer-section">
-                <h4>Follow Us</h4>
                 <div class="social-links">
-                    <a href="https://www.instagram.com/rainscopefilmworks/" target="_blank" aria-label="Instagram">
-                        <svg viewBox="0 0 64 64" width="32" height="32">
-                            <path d="M46.91,25.816c-0.073-1.597-0.326-2.687-0.697-3.641c-0.383-0.986-0.896-1.823-1.73-2.657c-0.834-0.834-1.67-1.347-2.657-1.73c-0.954-0.371-2.045-0.624-3.641-0.697C36.585,17.017,36.074,17,32,17s-4.585,0.017-6.184,0.09c-1.597,0.073-2.687,0.326-3.641,0.697c-0.986,0.383-1.823,0.896-2.657,1.73c-0.834,0.834-1.347,1.67-1.73,2.657c-0.371,0.954-0.624,2.045-0.697,3.641C17.017,27.415,17,27.926,17,32c0,4.074,0.017,4.585,0.09,6.184c0.073,1.597,0.326,2.687,0.697,3.641c0.383,0.986,0.896,1.823,1.73,2.657c0.834,0.834,1.67,1.347,2.657,1.73c0.954,0.371,2.045,0.624,3.641,0.697C27.415,46.983,27.926,47,32,47s4.585-0.017,6.184-0.09c1.597-0.073,2.687-0.326,3.641-0.697c0.986-0.383,1.823-0.896,2.657-1.73c0.834-0.834,1.347-1.67,1.73-2.657c0.371-0.954,0.624-2.045,0.697-3.641C46.983,36.585,47,36.074,47,32S46.983,27.415,46.91,25.816z M32,39.703c-4.254,0-7.703-3.449-7.703-7.703s3.449-7.703,7.703-7.703s7.703,3.449,7.703,7.703S36.254,39.703,32,39.703z M40.007,25.793c-0.994,0-1.8-0.806-1.8-1.8c0-0.994,0.806-1.8,1.8-1.8c0.994,0,1.8,0.806,1.8,1.8C41.807,24.987,41.001,25.793,40.007,25.793z"/>
-                        </svg>
-                    </a>
                     <a href="mailto:Hello@rainscopefilmworks.com" aria-label="Email">
                         <svg viewBox="0 0 64 64" width="32" height="32">
                             <path d="M17,22v20h30V22H17z M41.1,25L32,32.1L22.9,25H41.1z M20,39V26.6l12,9.3l12-9.3V39H20z"/>
+                        </svg>
+                    </a>
+                    <a href="https://www.instagram.com/rainscopefilmworks/" target="_blank" aria-label="Instagram">
+                        <svg viewBox="0 0 64 64" width="32" height="32">
+                            <path d="M46.91,25.816c-0.073-1.597-0.326-2.687-0.697-3.641c-0.383-0.986-0.896-1.823-1.73-2.657c-0.834-0.834-1.67-1.347-2.657-1.73c-0.954-0.371-2.045-0.624-3.641-0.697C36.585,17.017,36.074,17,32,17s-4.585,0.017-6.184,0.09c-1.597,0.073-2.687,0.326-3.641,0.697c-0.986,0.383-1.823,0.896-2.657,1.73c-0.834,0.834-1.347,1.67-1.73,2.657c-0.371,0.954-0.624,2.045-0.697,3.641C17.017,27.415,17,27.926,17,32c0,4.074,0.017,4.585,0.09,6.184c0.073,1.597,0.326,2.687,0.697,3.641c0.383,0.986,0.896,1.823,1.73,2.657c0.834,0.834,1.67,1.347,2.657,1.73c0.954,0.371,2.045,0.624,3.641,0.697C27.415,46.983,27.926,47,32,47s4.585-0.017,6.184-0.09c1.597-0.073,2.687-0.326,3.641-0.697c0.986-0.383,1.823-0.896,2.657-1.73c0.834-0.834,1.347-1.67,1.73-2.657c0.371-0.954,0.624-2.045,0.697-3.641C46.983,36.585,47,36.074,47,32S46.983,27.415,46.91,25.816z M32,39.703c-4.254,0-7.703-3.449-7.703-7.703s3.449-7.703,7.703-7.703s7.703,3.449,7.703,7.703S36.254,39.703,32,39.703z M40.007,25.793c-0.994,0-1.8-0.806-1.8-1.8c0-0.994,0.806-1.8,1.8-1.8c0.994,0,1.8,0.806,1.8,1.8C41.807,24.987,41.001,25.793,40.007,25.793z"/>
                         </svg>
                     </a>
                 </div>

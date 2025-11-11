@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rentals - Rainscope Filmworks</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+    /* Rentals App Styles */
+    :root{
+      --rs-bg:#0f2c29; --rs-card:#fff; --rs-text:#131417; --rs-muted:#6b7280;
+      --rs-border:#e6e7ea; --rs-accent:#2B3E5E; --rs-radius:12px;
+      --rs-gap:clamp(10px, 1.6vw, 16px); --rs-pad:clamp(8px, 1.4vw, 12px);
+      --rs-font:clamp(13px, 1.05vw, 15px);
+      --rs-chip-h:clamp(32px, 4.8vw, 36px);
+      --vh: 1vh;
+      --z-shell: 1; --z-sheet: 60; --z-toast: 70;
+    }
+
+    .rentals-wrapper *{box-sizing:border-box}
+    .rentals-wrapper .rs{background:var(--rs-bg);color:var(--rs-text);font:var(--rs-font)/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif}
+
+    /* centered shell up to 6000px */
+    .rentals-wrapper .rs-shell{
+      width:100%;
+      max-width:6000px;
+      margin-inline:auto;
+      padding-left: calc(20px + env(safe-area-inset-left));
+      padding-right: calc(20px + env(safe-area-inset-right));
+    }
+
+    /* >>> Full-bleed on mobile: apply to the GRID PARENT so Squarespace gutters don't constrain it */
+    @media (max-width:960px){
+      .rentals-wrapper #rs-app{
+        width:100vw;
+        max-width:100vw;
+        margin-left:calc(50% - 50vw);
+        margin-right:calc(50% - 50vw);
+      }
+    }
+
+    /* global 10px padding around everything */
+    .rentals-wrapper #rs-app{ padding:10px; }
+
+    /* Layout grid */
+    .rentals-wrapper #rs-app{display:grid;gap:var(--rs-gap);padding-top:var(--rs-gap);padding-bottom:var(--rs-gap);
+      grid-template-columns:260px 1fr 420px; grid-template-rows:56px 1fr;
+      grid-template-areas:"top top cart" "cats items cart";
+    }
+
+    /* Top */
+    .rentals-wrapper .rs-top{
+      grid-area:top;
+      display:flex;
+      align-items:center;
+      gap:var(--rs-gap);
+      background:#fff;
+      border:1px solid var(--rs-border);
+      border-radius:var(--rs-radius);
+      padding:var(--rs-pad) calc(var(--rs-pad) + 2px);
+    }
+    .rentals-wrapper #rs-search{
+      flex:1;
+      padding:.7rem .9rem;
+      border:1px solid var(--rs-border);
+      border-radius:10px;
+      font-size:clamp(14px,1.05vw,16px);
+    }
+    .rentals-wrapper .rs-toggle{
+      border:1px solid var(--rs-border);
+      background:#fff;
+      border-radius:10px;
+      padding:.55rem .7rem;
+      line-height:1;
+      cursor:pointer;
+    }
+    .rentals-wrapper .rs-only-mobile{display:none;}
+    .rentals-wrapper .rs-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:1.45em;
+      height:1.45em;
+      font-size:.78em;
+      border-radius:999px;
+      background:#111;
+      color:#fff;
+      margin-left:.5ch;
+      padding:0 .45ch;
+    }
+
+    /* Categories panel */
+    .rentals-wrapper .rs-cats{
+      grid-area:cats;
+      background:var(--rs-card);
+      border:1px solid var(--rs-border);
+      border-radius:var(--rs-radius);
+      min-height:60vh;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+    .rentals-wrapper .rs-cats-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-weight:700;
+      padding:10px 12px;
+      border-bottom:1px solid var(--rs-border);
+    }
+    .rentals-wrapper .rs-close{
+      border:none;
+      background:transparent;
+      font-size:18px;
+      padding:4px 6px;
+      cursor:pointer;
+      color:#98a2b3;
+    }
+
+    /* >>> Responsive, wider chips */
+    .rentals-wrapper .rs-cats-list{
+      display:flex; flex-direction:column;
+      gap:10px; padding:12px;
+      overflow:auto; scrollbar-gutter:stable both-edges;
+    }
+    .rentals-wrapper .rs-cat{
+      min-width:220px; max-width:100%;
+      height:auto; min-height:var(--rs-chip-h);
+      display:flex; align-items:center; justify-content:space-between;
+      border:1px solid var(--rs-border); background:#fff; border-radius:10px;
+      padding:.4rem 1.1rem; gap:.75rem; cursor:pointer;
+      white-space:normal; text-align:left;
+    }
+    .rentals-wrapper .rs-cat.active{background:var(--rs-accent);color:#fff;border-color:var(--rs-accent)}
+    .rentals-wrapper .rs-count{opacity:.9}
+
+    /* Items grid */
+    .rentals-wrapper .rs-items{
+      grid-area:items;
+      background:var(--rs-card);
+      border:1px solid var(--rs-border);
+      border-radius:var(--rs-radius);
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      min-height:50vh;
+    }
+    .rentals-wrapper .rs-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(clamp(200px, 28vw, 260px),1fr));
+      gap:clamp(10px,1.2vw,14px);
+    }
+    .rentals-wrapper .rs-card{
+      border:1px solid var(--rs-border);
+      border-radius:12px;
+      background:#fff;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+    }
+    .rentals-wrapper .rs-img{
+      aspect-ratio:9/16;
+      object-fit:cover;
+      width:100%;
+      background:#eef1f4;
+      display:block;
+    }
+    .rentals-wrapper .rs-body{
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .rentals-wrapper .rs-title{font-weight:700;}
+    .rentals-wrapper .rs-variant{
+      width:100%;
+      padding:.55rem;
+      border:1px solid var(--rs-border);
+      border-radius:10px;
+    }
+    .rentals-wrapper .rs-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .rentals-wrapper .rs-price{font-weight:700;}
+    .rentals-wrapper .rs-add{
+      padding:.55rem .8rem;
+      border:1px solid var(--rs-accent);
+      border-radius:10px;
+      background:#2B3E5E;
+      color:#fff;
+      cursor:pointer;
+    }
+
+    /* Cart (desktop) */
+    .rentals-wrapper .rs-cart{
+      grid-area:cart;
+      background:var(--rs-card);
+      border:1px solid var(--rs-border);
+      border-radius:var(--rs-radius);
+      display:flex;
+      flex-direction:column;
+      position:sticky;
+      top:var(--rs-gap);
+      max-height:calc(100vh - 32px);
+      overflow:hidden;
+      z-index:var(--z-shell);
+    }
+    .rentals-wrapper .rs-cart-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-weight:800;
+      padding:12px;
+      border-bottom:1px solid var(--rs-border);
+      background:#fff;
+    }
+    .rentals-wrapper .rs-head-count{font-weight:600;opacity:.7;margin-left:6px;}
+    .rentals-wrapper .rs-cart-scroll{
+      flex:1;
+      overflow:auto;
+      padding:12px;
+      min-height:0;
+      -webkit-overflow-scrolling:touch;
+    }
+    .rentals-wrapper .rs-cart-lines{display:flex;flex-direction:column;gap:8px;}
+    .rentals-wrapper .rs-line{display:grid;grid-template-columns:1fr 100px 24px;gap:8px;align-items:center;}
+    .rentals-wrapper .rs-line input[type=number]{
+      width:100px;
+      padding:.45rem;
+      border:1px solid var(--rs-border);
+      border-radius:10px;
+    }
+    .rentals-wrapper .rs-remove{
+      border:none;
+      background:transparent;
+      font-size:18px;
+      cursor:pointer;
+      color:#99a0a8;
+    }
+    .rentals-wrapper .rs-cart-footer{
+      border-top:1px solid var(--rs-border);
+      background:#fff;
+      padding:10px;
+      display:grid;
+      gap:10px;
+    }
+    .rentals-wrapper .rs-summary{
+      padding:10px;
+      border:1px dashed var(--rs-border);
+      border-radius:12px;
+      background:#fafbfc;
+      font-size:13px;
+      display:grid;
+      gap:6px;
+    }
+    .rentals-wrapper .rs-total{font-weight:700;}
+    .rentals-wrapper .rs-form{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .rentals-wrapper .rs-form input,.rentals-wrapper .rs-form textarea{
+      padding:.55rem .7rem;
+      border:1px solid var(--rs-border);
+      border-radius:10px;
+      grid-column:span 2;
+    }
+    .rentals-wrapper .rs-row2{
+      grid-column:span 2;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+    .rentals-wrapper .rs-label{
+      display:block;
+      font-size:12px;
+      color:var(--rs-muted);
+      margin-bottom:4px;
+    }
+    .rentals-wrapper .rs-actions{
+      grid-column:span 2;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .rentals-wrapper .rs-btn-primary{
+      padding:.72rem .95rem;
+      border:1px solid var(--rs-accent);
+      border-radius:12px;
+      background:#2B3E5E;
+      color:#fff;
+      cursor:pointer;
+    }
+    .rentals-wrapper .rs-status{font-size:13px;color:var(--rs-muted);}
+
+    /* Tablet */
+    @media (max-width:1100px){
+      .rentals-wrapper #rs-app{grid-template-columns:220px 1fr 360px}
+    }
+
+    /* Mobile stacks */
+    @media (max-width:960px){
+      .rentals-wrapper #rs-app{grid-template-columns:1fr;grid-template-rows:auto auto auto auto;grid-template-areas:"top" "cats" "items" "cart"}
+      .rentals-wrapper .rs-only-mobile{display:inline-flex}
+      .rentals-wrapper .rs-cats{min-height:auto}
+      /* mobile chips scroll horizontally */
+      .rentals-wrapper .rs-cats-list{flex-direction:row;flex-wrap:nowrap}
+      .rentals-wrapper .rs-cat{min-width:180px;flex-shrink:0}
+      .rentals-wrapper .rs-line{grid-template-columns:1fr 90px 24px}
+      .rentals-wrapper .rs-row2{grid-template-columns:1fr}
+      .rentals-wrapper .rs-grid{grid-template-columns:repeat(2, minmax(0,1fr))}
+    }
+
+    /* Phone bottom sheet */
+    @media (max-width:720px){
+      .rentals-wrapper .rs-cart{
+        position:fixed;left:0;right:0;bottom:0;
+        height:calc(var(--vh, 1vh) * 100);
+        border-radius:18px 18px 0 0; box-shadow:0 -14px 36px rgba(0,0,0,.22);
+        z-index:var(--z-sheet); transition:transform .26s ease, visibility .26s ease;
+        will-change:transform;
+      }
+      @supports (height: 100svh){ .rentals-wrapper .rs-cart{ height:100svh; } }
+      @supports (height: 100dvh){ .rentals-wrapper .rs-cart{ height:100dvh; } }
+      .rentals-wrapper .rs-cart[data-open="false"]{ transform:translateY(100%); visibility:hidden; pointer-events:none; }
+      .rentals-wrapper .rs-cart[data-open="true"]{  transform:translateY(0);     visibility:visible; pointer-events:auto; }
+      .rentals-wrapper .rs-cart-head{position:sticky;top:0;z-index:1}
+      .rentals-wrapper .rs-cart-scroll{padding:12px 12px 4px}
+      .rentals-wrapper .rs-cart-footer{position:sticky;bottom:0;z-index:1;padding:12px;border-top:1px solid var(--rs-border)}
+    }
+
+    /* Toast */
+    .rentals-wrapper .rs-toast{
+      position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);
+      background:#111;color:#fff;padding:.65rem .9rem;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;
+      transition:opacity .2s ease, transform .2s ease; z-index:var(--z-toast);
+    }
+    .rentals-wrapper .rs-toast.show{opacity:1;transform:translate(-50%, -6px)}
+    @media (prefers-reduced-motion:reduce){ .rentals-wrapper .rs-cart{transition:none} .rentals-wrapper .rs-toast{transition:none} }
+
+    /* Optional: lock page scroll when cart is open */
+    .rentals-wrapper .rs-lock{height:100vh; overflow:hidden;}
+   /* Desktop & tablet: no scrollbar for the chip list */
+   .rentals-wrapper .rs-cats-list{
+     overflow: visible;
+     scrollbar-gutter: auto;
+   }
+
+   /* Mobile: horizontal scroll for chips row */
+   @media (max-width:960px){
+     .rentals-wrapper .rs-cats-list{
+       overflow-x: auto;
+       overflow-y: hidden;
+       -webkit-overflow-scrolling: touch;
+       scrollbar-gutter: stable;
+     }
+   }
+   /* Desktop & tablet: chips fill the Categories panel, no scroll */
+   .rentals-wrapper .rs-cats-list{
+     display:flex;
+     flex-direction:column;
+     align-items:stretch;
+     gap:10px;
+     padding:12px;
+     overflow:visible;
+   }
+   .rentals-wrapper .rs-cat{
+     width:100%;
+     min-width:0;
+   }
+
+   /* Mobile: horizontal row with fixed min-width chips */
+   @media (max-width:960px){
+     .rentals-wrapper .rs-cats-list{
+       flex-direction:row;
+       align-items:stretch;
+       overflow-x:auto;
+       overflow-y:hidden;
+       -webkit-overflow-scrolling:touch;
+     }
+     .rentals-wrapper .rs-cat{
+       width:auto;
+       min-width:180px;
+       flex-shrink:0;
+     }
+   }
+
+   /* Page content wrapper */
+   .page-content {
+     margin-top: 72px;
+     padding: 2rem 1rem;
+     background: #173633;
+     color: white;
+     min-height: calc(100vh - 72px);
+   }
+
+   .rentals-wrapper {
+     max-width: 1800px;
+     margin: 0 auto;
+   }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <img src="assets/images/logo.png" alt="Rainscope Filmworks" class="logo-img">
+            </a>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <div class="nav-overlay" id="nav-overlay"></div>
+            <nav class="nav" id="main-nav">
+                <a href="our-work.html" class="nav-link">Our work</a>
+                <a href="rentals.html" class="nav-link">Rentals</a>
+                <a href="our-team.html" class="nav-link">Our team</a>
+                <a href="contact.html" class="nav-link">Contact us</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="page-content">
+        <div class="rentals-wrapper">
+            <h1 style="font-size: clamp(2rem, 4vw, 3.5rem); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 2rem; text-align: center; color: white;">Rentals</h1>
+            
+            <div id="rs-app" class="rs">
+              <header class="rs-top rs-shell">
+                <button class="rs-toggle rs-only-mobile" id="rs-open-cats" aria-expanded="false" aria-controls="rs-cats">Filters</button>
+                <input id="rs-search" type="search" placeholder="Search gear, kits, lenses…" />
+                <button class="rs-toggle rs-only-mobile rs-cart-toggle" id="rs-open-cart" aria-expanded="false" aria-controls="rs-cart">
+                  Cart <span id="rs-cart-badge" class="rs-badge" hidden>0</span>
+                </button>
+              </header>
+
+              <aside class="rs-cats rs-shell" id="rs-cats" aria-label="Categories">
+                <div class="rs-cats-head">
+                  <span>Categories</span>
+                  <button class="rs-close rs-only-mobile" id="rs-close-cats" aria-label="Close filters">✕</button>
+                </div>
+                <div id="rs-cats-list" class="rs-cats-list" role="tablist"></div>
+              </aside>
+
+              <main class="rs-items rs-shell">
+                <div id="rs-grid" class="rs-grid" aria-live="polite"></div>
+              </main>
+
+              <!-- Cart -->
+              <aside class="rs-cart" id="rs-cart" aria-label="Cart / Details" data-open="false">
+                <div class="rs-cart-head">
+                  <span>Cart <span id="rs-cart-count" class="rs-head-count" hidden>(0)</span> / Details</span>
+                  <button class="rs-close rs-only-mobile" id="rs-close-cart" aria-label="Close cart">✕</button>
+                </div>
+
+                <div class="rs-cart-scroll">
+                  <div id="rs-cart-lines" class="rs-cart-lines"></div>
+                </div>
+
+                <div class="rs-cart-footer">
+                  <div class="rs-summary">
+                    <div>Days: <span id="rs-days">—</span></div>
+                    <div>Per-day subtotal: <span id="rs-subday">—</span></div>
+                    <div class="rs-total">Estimated total (excl. tax): <strong id="rs-total">—</strong></div>
+                  </div>
+
+                  <div class="rs-form">
+                    <input id="first" placeholder="First name *" />
+                    <input id="last" placeholder="Last name" />
+                    <input id="email" type="email" placeholder="Email * (for the estimate)" />
+                    <input id="phone" placeholder="Phone (optional)" />
+                    <div class="rs-row2">
+                      <div class="rs-field">
+                        <label class="rs-label">Start date *</label>
+                        <input id="start" type="date" />
+                      </div>
+                      <div class="rs-field">
+                        <label class="rs-label">End date *</label>
+                        <input id="end" type="date" />
+                      </div>
+                    </div>
+                    <textarea id="note" rows="3" placeholder="Optional notes (delivery, PO, etc.)"></textarea>
+
+                    <div class="rs-actions">
+                      <button id="rs-submit" class="rs-btn-primary">Submit for Estimate</button>
+                      <span id="rs-status" class="rs-status"></span>
+                    </div>
+                  </div>
+                </div>
+              </aside>
+
+              <!-- Toast -->
+              <div id="rs-toast" class="rs-toast" hidden>Added to cart</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>Location</h4>
+                <div class="map-container">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2602.1234567890!2d-123.0806155!3d49.2683796!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDnCsDE2JzA2LjIiTiAxMjPCsDA0JzUwLjIiVw!5e0!3m2!1sen!2sca!4v1234567890123!5m2!1sen!2sca" 
+                        width="100%" 
+                        height="300" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+                <p>1868 Glen Dr #235<br>Vancouver, BC, V6A 4K4</p>
+            </div>
+            <div class="footer-section">
+                <h4>Hours</h4>
+                <p>Monday — Friday<br>9am — 5pm</p>
+                <p>Saturday — Sunday<br>Upon request</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>
+                    <a href="mailto:Hello@rainscopefilmworks.com">Hello@rainscopefilmworks.com</a><br>
+                    <a href="mailto:rentals@rainscopefilmworks.com">rentals@rainscopefilmworks.com</a>
+                </p>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/rainscopefilmworks/" target="_blank" aria-label="Instagram">
+                        <svg viewBox="0 0 64 64" width="32" height="32">
+                            <path d="M46.91,25.816c-0.073-1.597-0.326-2.687-0.697-3.641c-0.383-0.986-0.896-1.823-1.73-2.657c-0.834-0.834-1.67-1.347-2.657-1.73c-0.954-0.371-2.045-0.624-3.641-0.697C36.585,17.017,36.074,17,32,17s-4.585,0.017-6.184,0.09c-1.597,0.073-2.687,0.326-3.641,0.697c-0.986,0.383-1.823,0.896-2.657,1.73c-0.834,0.834-1.347,1.67-1.73,2.657c-0.371,0.954-0.624,2.045-0.697,3.641C17.017,27.415,17,27.926,17,32c0,4.074,0.017,4.585,0.09,6.184c0.073,1.597,0.326,2.687,0.697,3.641c0.383,0.986,0.896,1.823,1.73,2.657c0.834,0.834,1.67,1.347,2.657,1.73c0.954,0.371,2.045,0.624,3.641,0.697C27.415,46.983,27.926,47,32,47s4.585-0.017,6.184-0.09c1.597-0.073,2.687-0.326,3.641-0.697c0.986-0.383,1.823-0.896,2.657-1.73c0.834-0.834,1.347-1.67,1.73-2.657c0.371-0.954,0.624-2.045,0.697-3.641C46.983,36.585,47,36.074,47,32S46.983,27.415,46.91,25.816z M32,39.703c-4.254,0-7.703-3.449-7.703-7.703s3.449-7.703,7.703-7.703s7.703,3.449,7.703,7.703S36.254,39.703,32,39.703z M40.007,25.793c-0.994,0-1.8-0.806-1.8-1.8c0-0.994,0.806-1.8,1.8-1.8c0.994,0,1.8,0.806,1.8,1.8C41.807,24.987,41.001,25.793,40.007,25.793z"/>
+                        </svg>
+                    </a>
+                    <a href="mailto:Hello@rainscopefilmworks.com" aria-label="Email">
+                        <svg viewBox="0 0 64 64" width="32" height="32">
+                            <path d="M17,22v20h30V22H17z M41.1,25L32,32.1L22.9,25H41.1z M20,39V26.6l12,9.3l12-9.3V39H20z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+    <script>
+    /* Robust mobile viewport fallback for --vh */
+    (function(){
+      function setVH(){
+        const vv = window.visualViewport;
+        const h = vv ? vv.height : window.innerHeight;
+        document.documentElement.style.setProperty('--vh', `${h * 0.01}px`);
+      }
+      setVH();
+      addEventListener('resize', setVH, {passive:true});
+      if (window.visualViewport) {
+        visualViewport.addEventListener('resize', setVH, {passive:true});
+      }
+      addEventListener('orientationchange', () => setTimeout(setVH, 120), {passive:true});
+    })();
+    </script>
+
+    <script>
+    // Wait for DOM to be fully ready, then initialize
+    (async function initRentalsApp() {
+      // Ensure DOM is ready
+      if (document.readyState === 'loading') {
+        await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
+      }
+      
+      (async () => {
+      const PROXY_BASE  = "https://rainscope-square-proxy.sweet-queen-15c3.workers.dev";
+      const LOCATION_ID = "L5CDX7TRVDN0C";
+      const EXCLUDE_CATEGORY_NAMES = ["labour","services","service","A tile on the streets","hidden"];
+      const normalize = s => (s||"").toLowerCase().replace(/&/g," and ").replace(/[^a-z0-9]+/g," ").replace(/\s+/g," ").trim();
+      const excludeSet = new Set(EXCLUDE_CATEGORY_NAMES.map(normalize));
+
+      // DOM
+      const $cats = document.getElementById("rs-cats-list");
+      const $grid = document.getElementById("rs-grid");
+      const $search = document.getElementById("rs-search");
+      const $lines = document.getElementById("rs-cart-lines");
+      const $submit = document.getElementById("rs-submit");
+      const $status = document.getElementById("rs-status");
+      const $days = document.getElementById("rs-days");
+      const $subDay = document.getElementById("rs-subday");
+      const $total = document.getElementById("rs-total");
+      const $cartPanel = document.getElementById("rs-cart");
+      const $openCart = document.getElementById("rs-open-cart");
+      const $closeCart = document.getElementById("rs-close-cart");
+      const $badge = document.getElementById("rs-cart-badge");
+      const $count = document.getElementById("rs-cart-count");
+      const $toast = document.getElementById("rs-toast");
+
+      // Debug: Check if DOM elements exist
+      console.log("DOM elements check:", {
+        cats: !!$cats,
+        grid: !!$grid,
+        search: !!$search
+      });
+
+      if (!$cats || !$grid) {
+        console.error("Critical DOM elements missing!");
+        if ($grid) $grid.innerHTML = "<em style='color:red;'>Error: Page structure incomplete. Please refresh.</em>";
+        return;
+      }
+
+      // State
+      let objects=[], items=[], categories=[], imagesById={};
+      let activeCat="all";
+      const cart = JSON.parse(localStorage.getItem("rs_cart") || "[]");
+
+      // Money + totals
+      const money = n => n.toLocaleString(undefined,{style:"currency",currency:"CAD"});
+      const priceNum = pm => pm && typeof pm.amount==="number" ? pm.amount/100 : 0;
+      const MS=86400000;
+      const toISO = d => d.toISOString().slice(0,10);
+      const parseDate = v => { const d=new Date(v); return isNaN(d)?null:d; };
+      const dayDiff = (a,b)=>{ const da=new Date(a.getFullYear(),a.getMonth(),a.getDate()); const db=new Date(b.getFullYear(),b.getMonth(),b.getDate()); return Math.max(1, Math.round((db-da)/MS)||1); };
+      const getDays = ()=>{ const s=parseDate(document.getElementById("start").value); const e=parseDate(document.getElementById("end").value); if(!s||!e) return 0; return dayDiff(s,e); };
+
+      // >>> NEW: billable days with 4-day weekly cap
+      // 1–4 -> 1–4, 5–7 -> 4; add 4 per full week, remainder capped at 4.
+      // e.g., 28 -> 16; 30 -> 18.
+      function billableDays(actualDays){
+        if (!actualDays) return 0;
+        const weeks = Math.floor(actualDays / 7);
+        const rem   = actualDays % 7;
+        return weeks * 4 + Math.min(4, rem);
+      }
+
+      const isPhone = () => matchMedia("(max-width: 720px)").matches;
+
+      function showToast(msg="Added to cart"){
+        if(!$toast) return;
+        $toast.textContent = msg;
+        $toast.hidden = false;
+        requestAnimationFrame(()=> $toast.classList.add("show"));
+        setTimeout(()=>{ $toast.classList.remove("show"); setTimeout(()=> $toast.hidden=true, 200); }, 1200);
+      }
+
+      function itemCatId(it){ return it?.item_data?.category_id
+        || it?.item_data?.reporting_category?.id
+        || (it?.item_data?.categories?.[0]?.id ?? null); }
+
+      function updateBadges(){
+        const units = cart.reduce((n,l)=> n + Math.max(1,parseInt(l.qty||"1",10)), 0);
+        if($badge){ if(units>0){ $badge.textContent=String(units); $badge.hidden=false; } else $badge.hidden=true; }
+        if($count){ if(units>0){ $count.textContent = `(${units})`; $count.hidden=false; } else $count.hidden=true; }
+      }
+
+      // >>> UPDATED: use billableDays() and display "actual (billed)"
+      function computeTotals(){
+        const daysActual = getDays();
+        const daysBill   = billableDays(daysActual);
+        const perDay = cart.reduce((sum,l)=> sum + priceNum(l.priceMoney) * Math.max(1,parseInt(l.qty||"1",10)), 0);
+        $days.textContent   = daysActual ? `${daysActual} (billed ${daysBill})` : "—";
+        $subDay.textContent = perDay ? money(perDay) : "—";
+        $total.textContent  = (perDay && daysBill) ? money(perDay * daysBill) : "—";
+      }
+
+      function saveCart(){ localStorage.setItem("rs_cart", JSON.stringify(cart)); }
+      function renderCart(){
+        if(!cart.length){ $lines.innerHTML = "<em>No items yet.</em>"; updateBadges(); computeTotals(); return; }
+        $lines.innerHTML = cart.map((l,i)=>`
+          <div class="rs-line">
+            <div>
+              <div>${l.name}</div>
+              <div style="font-size:12px;color:#6b7280">Price/day: ${l.priceMoney? money(priceNum(l.priceMoney)):"—"}</div>
+            </div>
+            <input type="number" min="1" data-i="${i}" value="${l.qty}">
+            <button class="rs-remove" data-rm="${i}">&times;</button>
+          </div>`).join("");
+        $lines.querySelectorAll("input[type=number]").forEach(inp=>{
+          inp.onchange=e=>{ const i=+e.target.dataset.i; cart[i].qty=String(Math.max(1,parseInt(e.target.value||"1",10))); saveCart(); updateBadges(); computeTotals(); };
+        });
+        $lines.querySelectorAll("[data-rm]").forEach(btn=>{
+          btn.onclick=()=>{ cart.splice(+btn.dataset.rm,1); saveCart(); renderCart(); };
+        });
+        updateBadges(); computeTotals();
+      }
+
+      function openCart(){
+        $cartPanel.dataset.open = "true";
+        document.documentElement.classList.add('rs-lock');
+        document.body.classList.add('rs-lock');
+        $openCart?.setAttribute("aria-expanded","true");
+      }
+      function closeCart(){
+        $cartPanel.dataset.open = "false";
+        document.documentElement.classList.remove('rs-lock');
+        document.body.classList.remove('rs-lock');
+        $openCart?.setAttribute("aria-expanded","false");
+      }
+
+      function addToCart(variationId, name, priceMoney){
+        const line = cart.find(l=>l.variationId===variationId);
+        if(line) line.qty = String((+line.qty||1)+1);
+        else cart.push({variationId,name,priceMoney,qty:"1"});
+        saveCart(); renderCart(); showToast();
+      }
+
+      async function loadCatalog(){
+        try {
+          console.log("Loading catalog from:", `${PROXY_BASE}/api/catalog`);
+          $grid.innerHTML = "<em>Loading catalog...</em>";
+          
+          const response = await fetch(`${PROXY_BASE}/api/catalog?bust=${Date.now()}`);
+          
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+          
+          const data = await response.json();
+          console.log("API Response:", data);
+          
+          if (!data || typeof data !== 'object') {
+            throw new Error("Invalid API response format");
+          }
+          
+          objects    = Array.isArray(data.objects) ? data.objects : [];
+          console.log(`Loaded ${objects.length} objects from API`);
+          
+          imagesById = Object.fromEntries(objects.filter(o=>o.type==="IMAGE" && o.image_data).map(o=>[o.id,o]));
+          categories = objects.filter(o => o.type==="CATEGORY" && !o.is_deleted && o.category_data);
+          const itemsRaw = objects.filter(o => o.type==="ITEM" && !o.is_deleted && o.item_data);
+          
+          console.log(`Found ${categories.length} categories and ${itemsRaw.length} items`);
+
+          const nameById = Object.fromEntries(categories.map(c => [c.id, c.category_data.name]));
+
+          items = itemsRaw.filter(it=>{
+            const pt=(it.item_data?.product_type||"REGULAR").toUpperCase();
+            if(pt!=="REGULAR") return false;
+            const cid=itemCatId(it);
+            if(cid){
+              const norm=normalize(nameById[cid]||"");
+              if(excludeSet.has(norm)) return false;
+            }
+            const locs=it.present_at_location_ids||it.item_data?.present_at_location_ids||[];
+            const absent=it.absent_at_location_ids||it.item_data?.absent_at_location_ids||[];
+            if(absent.includes(LOCATION_ID)) return false;
+            return (locs.length===0 || locs.includes(LOCATION_ID));
+          });
+
+          const counts=new Map(); let unassigned=0;
+          for(const it of items){
+            const cid=itemCatId(it);
+            if(cid){
+              const norm=normalize(nameById[cid]||"");
+              if(excludeSet.has(norm)) continue;
+              counts.set(cid,(counts.get(cid)||0)+1);
+            } else unassigned++;
+          }
+
+          const chips=[{id:"all",name:"All",count:items.length}];
+          const entries=[...counts.entries()].map(([cid,n])=>({id:cid,name:nameById[cid]||"Category",count:n}));
+          entries.sort((a,b)=>a.name.localeCompare(b.name));
+          chips.push(...entries);
+          if(unassigned>0) chips.push({id:"__unassigned",name:"Unassigned",count:unassigned});
+
+          if (!$cats) {
+            console.error("Categories container not found!");
+            return;
+          }
+
+          $cats.innerHTML = chips.map(c=>`
+            <button class="rs-cat ${c.id===activeCat?'active':''}" data-cat="${c.id}" role="tab" aria-selected="${c.id===activeCat}">
+              <span>${c.name}</span> <span class="rs-count">${c.count}</span>
+            </button>`).join("");
+
+          $cats.querySelectorAll("[data-cat]").forEach(b=>{
+            b.onclick=()=>{ activeCat=b.dataset.cat; $cats.querySelectorAll(".rs-cat").forEach(x=>x.classList.remove("active")); b.classList.add("active"); renderGrid(); };
+          });
+          
+          console.log(`Rendered ${chips.length} category chips`);
+        } catch (error) {
+          console.error("Error loading catalog:", error);
+          const errorMsg = error.message || "Unknown error";
+          if ($grid) {
+            $grid.innerHTML = `<em style='color:red;'>Error loading catalog: ${errorMsg}. Please check your connection and try again.</em>`;
+          }
+          if ($cats) {
+            $cats.innerHTML = "<em style='color:red;'>Unable to load categories</em>";
+          }
+        }
+      }
+
+      function inCat(it){
+        if(activeCat==="all") return true;
+        if(activeCat==="__unassigned") return !itemCatId(it);
+        return itemCatId(it)===activeCat;
+      }
+
+      function renderGrid(){
+        if (!$grid) {
+          console.error("Grid container not found!");
+          return;
+        }
+        
+        const q=($search?.value||"").toLowerCase().trim();
+        const list=items.filter(it=>{
+          if(!inCat(it)) return false;
+          if(!q) return true;
+          return (it.item_data?.name||"").toLowerCase().includes(q);
+        });
+
+        console.log(`Rendering ${list.length} items (filtered from ${items.length} total)`);
+
+        if(!list.length){ 
+          $grid.innerHTML="<em>No items match your search.</em>"; 
+          return; 
+        }
+        list.sort((a,b)=> (a.item_data?.name||"").localeCompare(b.item_data?.name||""));
+
+        $grid.innerHTML = list.map(item=>{
+          const vars=item.item_data?.variations||[];
+          const first=vars[0];
+          const imgId=item.item_data?.image_ids?.[0];
+          const img=imgId?(imagesById[imgId]?.image_data?.url||""):"";
+          const title=item.item_data?.name||"Item";
+
+          const opts = vars.map(v=>{
+            const d=v.item_variation_data||{};
+            const p=d.price_money||null;
+            const pjson = p ? JSON.stringify(p).replace(/"/g,'&quot;') : "";
+            const priceTxt = p ? (p.amount/100).toLocaleString(undefined,{style:"currency",currency:"CAD"}) : "";
+            return `<option value="${v.id}" data-price="${pjson}">${d.name||"Default"}${priceTxt? " — "+priceTxt:""} / day</option>`;
+          }).join("");
+
+          const firstPrice = first?.item_variation_data?.price_money || null;
+
+          return `
+            <div class="rs-card">
+              ${img? `<img class="rs-img" loading="lazy" src="${img}" alt="${title}">` : `<div class="rs-img"></div>`}
+              <div class="rs-body">
+                <div class="rs-title">${title}</div>
+                <select class="rs-variant" data-item="${item.id}">${opts}</select>
+                <div class="rs-row">
+                  <div class="rs-price" data-price-for="${item.id}">${firstPrice? (firstPrice.amount/100).toLocaleString(undefined,{style:"currency",currency:"CAD"})+" / day":""}</div>
+                  <button class="rs-add" data-add="${item.id}">Add</button>
+                </div>
+              </div>
+            </div>`;
+        }).join("");
+
+        $grid.querySelectorAll(".rs-variant").forEach(sel=>{
+          sel.onchange=()=>{
+            const itemId=sel.getAttribute("data-item");
+            const opt=sel.options[sel.selectedIndex];
+            const priceStr=opt.getAttribute("data-price");
+            const priceObj=priceStr? JSON.parse(priceStr.replaceAll('&quot;','"')) : null;
+            const el=$grid.querySelector(`[data-price-for="${itemId}"]`);
+            if(el) el.textContent = priceObj ? (priceObj.amount/100).toLocaleString(undefined,{style:"currency",currency:"CAD"})+" / day" : "";
+          };
+        });
+        $grid.querySelectorAll("[data-add]").forEach(btn=>{
+          btn.onclick=()=>{
+            const itemId=btn.getAttribute("data-add");
+            const item=items.find(i=>i.id===itemId);
+            const sel=$grid.querySelector(`.rs-variant[data-item="${itemId}"]`);
+            const varId=sel.value;
+            const v=(item.item_data?.variations||[]).find(x=>x.id===varId);
+            const name=`${item.item_data?.name||"Item"} — ${(v?.item_variation_data?.name)||"Default"}`;
+            const p=v?.item_variation_data?.price_money||null;
+            addToCart(varId,name,p);
+          };
+        });
+      }
+
+      // Submit
+    async function submit() {
+      const setStatus = m => { if ($status) $status.textContent = m; };
+
+      try {
+        const given_name   = document.getElementById("first").value.trim();
+        const family_name  = document.getElementById("last").value.trim();
+        const email_address= document.getElementById("email").value.trim();
+        const phone_number = document.getElementById("phone").value.trim() || undefined;
+        let   startStr     = (document.getElementById("start").value || "").trim();
+        let   endStr       = (document.getElementById("end").value   || "").trim();
+        const noteExtra    = document.getElementById("note").value.trim();
+
+        if (!given_name || !email_address) { alert("First name and email are required."); return; }
+        if (!cart.length)                  { alert("Add at least one item."); return; }
+        if (!startStr || !endStr)          { alert("Choose start and end dates."); return; }
+        if (startStr > endStr)             { alert("End date must be on/after start date."); return; }
+
+        // ensure yyyy-mm-dd (type="date" already provides this in most browsers)
+        startStr = startStr.slice(0, 10);
+        endStr   = endStr.slice(0, 10);
+
+        setStatus("Creating customer…");
+        const cust = await fetch(`${PROXY_BASE}/api/customer`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ given_name, family_name, email_address, phone_number })
+        }).then(r => r.json());
+
+        if (!cust?.customer_id) {
+          alert("Estimate failed: could not create/find customer.");
+          setStatus("");
+          return;
+        }
+
+        // >>> UPDATED: use billed days
+        const daysActual = Math.max(1, getDays());
+        const daysBill   = billableDays(daysActual);
+
+        const line_items = cart.flatMap(l => {
+          const units = Math.max(1, parseInt(l.qty || "1", 10));
+          const base  = { catalog_object_id: l.variationId, quantity: String(daysBill) };
+          return Array.from({ length: units }, () => base);
+        });
+
+        // >>> UPDATED: note shows both actual and billed
+        const note = `Rental dates: ${startStr} → ${endStr} (${daysActual} day${daysActual > 1 ? 's' : ''}, billed ${daysBill}). ${noteExtra || ""}`.trim();
+
+        setStatus("Submitting estimate…");
+        const res = await fetch(`${PROXY_BASE}/api/estimate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customer_id: cust.customer_id,
+            location_id: LOCATION_ID,
+            line_items,
+            note,
+            publish: true,
+            delivery_method: "EMAIL",
+            // IMPORTANT: send start_date for the invoice payment request due date
+            start_date: startStr
+          })
+        });
+
+        const data = await res.json();
+
+        if (!data?.ok) {
+          // Surface worker/Square error message if present
+          alert("Estimate failed:\n" + (data?.error || `HTTP ${res.status}`));
+          setStatus("");
+          return;
+        }
+
+        setStatus("Estimate sent!");
+        alert("Estimate emailed. Thank you!");
+        cart.length = 0; saveCart(); renderCart(); computeTotals();
+        if (isPhone()) closeCart();
+
+      } catch (err) {
+        alert("Estimate failed:\n" + (err?.message || String(err)));
+        setStatus("");
+      }
+    }
+      // Init
+      try{
+        console.log("Initializing rentals app...");
+        const today=new Date(), tomorrow=new Date(Date.now()+MS);
+        const s=document.getElementById("start"), e=document.getElementById("end");
+        if(s && e && !s.value && !e.value){ s.value=toISO(today); e.value=toISO(tomorrow); }
+        await loadCatalog();
+        renderGrid();
+        console.log("Rentals app initialized successfully");
+      }catch(e){ 
+        console.error("Initialization error:", e);
+        if ($grid) {
+          $grid.innerHTML = `<em style='color:red;'>Failed to initialize: ${e.message}</em>`;
+        }
+      }
+
+      $search?.addEventListener("input", ()=> renderGrid());
+      $submit?.addEventListener("click", submit);
+      document.getElementById("start")?.addEventListener("change", computeTotals);
+      document.getElementById("end")?.addEventListener("change", computeTotals);
+
+      // Open/close
+      document.getElementById("rs-open-cats")?.addEventListener("click", ()=>{ 
+        const cats = document.getElementById("rs-cats");
+        if (cats) {
+          const isExpanded = document.getElementById("rs-open-cats").getAttribute("aria-expanded") === "true";
+          document.getElementById("rs-open-cats").setAttribute("aria-expanded", !isExpanded);
+        }
+      });
+      document.getElementById("rs-close-cats")?.addEventListener("click", ()=>{ 
+        document.getElementById("rs-open-cats")?.setAttribute("aria-expanded", "false");
+      });
+      document.getElementById("rs-open-cart")?.addEventListener("click", ()=>{ ($cartPanel.dataset.open==="true") ? closeCart() : openCart(); });
+      document.getElementById("rs-close-cart")?.addEventListener("click", ()=> closeCart());
+
+      // Tap outside to close on phone
+      addEventListener("click",(e)=>{
+        if (!isPhone()) return;
+        if($cartPanel.dataset.open==="true" && !e.target.closest("#rs-cart,#rs-open-cart")) closeCart();
+      },{passive:true});
+
+      renderCart();
+      computeTotals();
+      })();
+    })();
+    </script>
+</body>
+</html>

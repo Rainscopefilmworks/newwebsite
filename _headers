@@ -1,0 +1,31 @@
+# Cloudflare Pages Headers
+# Add custom headers for security and performance
+
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# Cache static assets
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Cache images
+/assets/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Cache videos
+/assets/videos/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Cache CSS and JS
+/assets/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML files - no cache
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+

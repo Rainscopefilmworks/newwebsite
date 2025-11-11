@@ -575,6 +575,9 @@
       const EXCLUDE_CATEGORY_NAMES = ["labour","services","service","A tile on the streets","hidden"];
       const normalize = s => (s||"").toLowerCase().replace(/&/g," and ").replace(/[^a-z0-9]+/g," ").replace(/\s+/g," ").trim();
       const excludeSet = new Set(EXCLUDE_CATEGORY_NAMES.map(normalize));
+      
+      // Debug mode: set to true to bypass location filtering
+      const DEBUG_MODE = false;
 
       // DOM
       const $cats = document.getElementById("rs-cats-list");
@@ -732,17 +735,43 @@
 
           items = itemsRaw.filter(it=>{
             const pt=(it.item_data?.product_type||"REGULAR").toUpperCase();
-            if(pt!=="REGULAR") return false;
+            if(pt!=="REGULAR") {
+              console.log(`Item ${it.item_data?.name} filtered: product_type is ${pt}`);
+              return false;
+            }
             const cid=itemCatId(it);
             if(cid){
               const norm=normalize(nameById[cid]||"");
-              if(excludeSet.has(norm)) return false;
+              if(excludeSet.has(norm)) {
+                console.log(`Item ${it.item_data?.name} filtered: category "${nameById[cid]}" is excluded`);
+                return false;
+              }
             }
-            const locs=it.present_at_location_ids||it.item_data?.present_at_location_ids||[];
-            const absent=it.absent_at_location_ids||it.item_data?.absent_at_location_ids||[];
-            if(absent.includes(LOCATION_ID)) return false;
-            return (locs.length===0 || locs.includes(LOCATION_ID));
+            
+            // Location filtering
+            if (!DEBUG_MODE) {
+              const locs=it.present_at_location_ids||it.item_data?.present_at_location_ids||[];
+              const absent=it.absent_at_location_ids||it.item_data?.absent_at_location_ids||[];
+              if(absent.includes(LOCATION_ID)) {
+                console.log(`Item ${it.item_data?.name} filtered: absent at location ${LOCATION_ID}`);
+                return false;
+              }
+              const locationMatch = (locs.length===0 || locs.includes(LOCATION_ID));
+              if (!locationMatch) {
+                console.log(`Item ${it.item_data?.name} filtered: not present at location ${LOCATION_ID}`, {locs, LOCATION_ID});
+              }
+              return locationMatch;
+            } else {
+              console.log(`DEBUG MODE: Item ${it.item_data?.name} included (location filtering bypassed)`);
+              return true;
+            }
           });
+          
+          console.log(`After filtering: ${items.length} items remain (from ${itemsRaw.length} raw items)`);
+          if (items.length === 0 && itemsRaw.length > 0) {
+            console.warn("All items were filtered out! Check filtering logic.");
+            console.log("Sample raw item:", itemsRaw[0]);
+          }
 
           const counts=new Map(); let unassigned=0;
           for(const it of items){
@@ -778,8 +807,20 @@
         } catch (error) {
           console.error("Error loading catalog:", error);
           const errorMsg = error.message || "Unknown error";
+          
+          // Check for CORS error
+          let displayMsg = errorMsg;
+          if (errorMsg.includes("Failed to fetch") || errorMsg.includes("CORS")) {
+            const isLocalFile = window.location.protocol === "file:";
+            if (isLocalFile) {
+              displayMsg = "CORS Error: This page must be served from a web server (not opened as a file). The API only allows requests from https://rainscopefw.squarespace.com. This will work when deployed to your website.";
+            } else {
+              displayMsg = "CORS Error: The API server is not allowing requests from this origin. Please check the API CORS configuration.";
+            }
+          }
+          
           if ($grid) {
-            $grid.innerHTML = `<em style='color:red;'>Error loading catalog: ${errorMsg}. Please check your connection and try again.</em>`;
+            $grid.innerHTML = `<div style='color:red; padding: 2rem; text-align: center;'><strong>Error loading catalog:</strong><br>${displayMsg}<br><br><small>Check the browser console for more details.</small></div>`;
           }
           if ($cats) {
             $cats.innerHTML = "<em style='color:red;'>Unable to load categories</em>";
@@ -799,17 +840,30 @@
           return;
         }
         
+        console.log(`renderGrid called with ${items.length} items, activeCat: ${activeCat}`);
+        
         const q=($search?.value||"").toLowerCase().trim();
         const list=items.filter(it=>{
-          if(!inCat(it)) return false;
+          if(!inCat(it)) {
+            console.log(`Item ${it.item_data?.name} filtered by category`);
+            return false;
+          }
           if(!q) return true;
-          return (it.item_data?.name||"").toLowerCase().includes(q);
+          const nameMatch = (it.item_data?.name||"").toLowerCase().includes(q);
+          if (!nameMatch) {
+            console.log(`Item ${it.item_data?.name} filtered by search query: "${q}"`);
+          }
+          return nameMatch;
         });
 
-        console.log(`Rendering ${list.length} items (filtered from ${items.length} total)`);
+        console.log(`Rendering ${list.length} items (filtered from ${items.length} total, search: "${q}")`);
 
         if(!list.length){ 
-          $grid.innerHTML="<em>No items match your search.</em>"; 
+          if (items.length === 0) {
+            $grid.innerHTML="<em>No items available. Please check the console for details.</em>"; 
+          } else {
+            $grid.innerHTML="<em>No items match your search or category filter.</em>"; 
+          }
           return; 
         }
         list.sort((a,b)=> (a.item_data?.name||"").localeCompare(b.item_data?.name||""));
@@ -968,10 +1022,20 @@
         }
       }
 
-      $search?.addEventListener("input", ()=> renderGrid());
-      $submit?.addEventListener("click", submit);
-      document.getElementById("start")?.addEventListener("change", computeTotals);
-      document.getElementById("end")?.addEventListener("change", computeTotals);
+      if ($search) {
+        $search.addEventListener("input", ()=> renderGrid());
+      }
+      if ($submit) {
+        $submit.addEventListener("click", submit);
+      }
+      const $start = document.getElementById("start");
+      const $end = document.getElementById("end");
+      if ($start) {
+        $start.addEventListener("change", computeTotals);
+      }
+      if ($end) {
+        $end.addEventListener("change", computeTotals);
+      }
 
       // Open/close
       document.getElementById("rs-open-cats")?.addEventListener("click", ()=>{ 

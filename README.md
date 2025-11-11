@@ -7,6 +7,11 @@ A modern, responsive website for Rainscope Filmworks - A Creative Production Com
 ```
 rainscope-site/
 ├── index.html              # Main HTML file
+├── rentals.html            # Rentals page with catalog integration
+├── our-work.html           # Our work page
+├── our-team.html           # Our team page
+├── contact.html            # Contact page
+├── serve.py                # Local development server script
 ├── _headers                # Cloudflare Pages headers configuration
 ├── _redirects              # Cloudflare Pages redirects configuration
 ├── .gitignore              # Git ignore rules
@@ -41,7 +46,17 @@ rainscope-site/
 
 ## Local Development
 
-Simply open `index.html` in a web browser, or use a local server:
+**Important**: The rentals page requires a web server due to CORS restrictions. Opening HTML files directly (`file://`) will not work for the rentals API.
+
+### Option 1: Use the included server script
+
+```bash
+python3 serve.py
+```
+
+This will automatically open `http://localhost:8000/rentals.html` in your browser.
+
+### Option 2: Use Python's built-in server
 
 ```bash
 # Using Python 3
@@ -49,12 +64,17 @@ python3 -m http.server 8000
 
 # Using Python 2
 python -m SimpleHTTPServer 8000
-
-# Using Node.js (if you have http-server installed)
-npx http-server
 ```
 
 Then visit `http://localhost:8000`
+
+### Option 3: Using Node.js (if you have http-server installed)
+
+```bash
+npx http-server
+```
+
+**Note**: The rentals API (`https://rainscope-square-proxy.sweet-queen-15c3.workers.dev`) is configured to only accept requests from `https://rainscopefw.squarespace.com`. When testing locally, you may see CORS errors. The rentals page will work correctly when deployed to your production domain.
 
 ## Deployment to Cloudflare Pages
 
@@ -104,11 +124,13 @@ The `_headers` and `_redirects` files will be automatically used by Cloudflare P
 
 - ✅ Responsive design (mobile, tablet, desktop)
 - ✅ Hero section with video background
-- ✅ Animated marquee text
 - ✅ Auto-rotating testimonials carousel
 - ✅ Expandable services accordion
 - ✅ Interactive footer with map
 - ✅ Social media links
+- ✅ Rentals catalog page with Square API integration
+- ✅ Mobile-responsive navigation with hamburger menu
+- ✅ Contact form integration (Tally.so)
 
 ## Browser Support
 

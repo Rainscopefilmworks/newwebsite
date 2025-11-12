@@ -1047,6 +1047,200 @@ body {
     }
 }
 
+/* Contact Page Styles */
+.contact-page {
+    margin-top: var(--header-height);
+    padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 4vw, 3rem);
+    background: #173633;
+    color: white;
+    min-height: calc(100vh - var(--header-height));
+}
+
+.contact-container {
+    max-width: min(90vw, 6000px);
+    margin: 0 auto;
+}
+
+.contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(3rem, 6vw, 6rem);
+    align-items: center;
+    min-height: 60vh;
+}
+
+.contact-form-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-form-wrapper {
+    width: 100%;
+    max-width: min(500px, 100%);
+}
+
+.contact-form-container {
+    width: 100%;
+    border: none;
+    background: transparent;
+}
+
+.contact-form-container iframe {
+    border: none;
+    background: transparent;
+}
+
+/* Circular Images Section */
+.contact-images-section {
+    position: relative;
+    width: 100%;
+    height: clamp(500px, 60vw, 800px);
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-circle-image {
+    position: absolute;
+    width: clamp(280px, 35vw, 450px);
+    height: clamp(280px, 35vw, 450px);
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    border: none;
+    transition: transform 0.3s ease, z-index 0.3s ease;
+}
+
+.contact-circle-image:hover {
+    transform: scale(1.05);
+    z-index: 10;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+.contact-circle-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Position the circles in an overlapping composition */
+.contact-circle-1 {
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+}
+
+.contact-circle-2 {
+    bottom: 10%;
+    left: 5%;
+    z-index: 2;
+    transform: translateX(0);
+}
+
+.contact-circle-3 {
+    bottom: 10%;
+    right: 5%;
+    z-index: 1;
+    transform: translateX(0);
+}
+
+.contact-circle-1:hover {
+    transform: translateX(-50%) scale(1.05);
+}
+
+.contact-circle-2:hover {
+    transform: scale(1.05);
+}
+
+.contact-circle-3:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 1024px) {
+    .contact-layout {
+        grid-template-columns: 1fr;
+        gap: clamp(3rem, 6vw, 5rem);
+    }
+    
+    .contact-images-section {
+        height: clamp(450px, 55vw, 700px);
+        min-height: 450px;
+    }
+    
+    .contact-circle-image {
+        width: clamp(240px, 30vw, 380px);
+        height: clamp(240px, 30vw, 380px);
+    }
+    
+    .contact-circle-1 {
+        top: 3%;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .contact-circle-2 {
+        bottom: 8%;
+        left: 3%;
+        transform: translateX(0);
+    }
+    
+    .contact-circle-3 {
+        bottom: 8%;
+        right: 3%;
+        transform: translateX(0);
+    }
+    
+    .contact-circle-1:hover {
+        transform: translateX(-50%) scale(1.05);
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-layout {
+        gap: clamp(2rem, 4vw, 3rem);
+    }
+    
+    .contact-images-section {
+        height: clamp(400px, 50vw, 600px);
+        min-height: 400px;
+    }
+    
+    .contact-circle-image {
+        width: clamp(200px, 35vw, 300px);
+        height: clamp(200px, 35vw, 300px);
+    }
+    
+    .contact-circle-1 {
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .contact-circle-2 {
+        bottom: 5%;
+        left: 0;
+        transform: translateX(0);
+    }
+    
+    .contact-circle-3 {
+        bottom: 5%;
+        right: 0;
+        transform: translateX(0);
+    }
+    
+    .contact-circle-1:hover {
+        transform: translateX(-50%) scale(1.05);
+    }
+    
+    .contact-form-wrapper {
+        max-width: 100%;
+    }
+}
+
 /* Team Page Styles */
 .team-page {
     margin-top: var(--header-height);
@@ -1057,7 +1251,7 @@ body {
 }
 
 .team-container {
-    max-width: 6000px;
+    max-width: min(90vw, 6000px);
     margin: 0 auto;
     width: 100%;
 }
@@ -1076,7 +1270,7 @@ body {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: clamp(1.5rem, 3vw, 3rem);
-    max-width: 1800px;
+    max-width: 6000px;
     margin: 0 auto;
     justify-items: center;
     align-items: start;

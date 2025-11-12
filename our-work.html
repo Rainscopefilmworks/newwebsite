@@ -51,29 +51,46 @@
         <div class="our-work-container">
             <h1 class="our-work-title">Our Work</h1>
             
-            <!-- GIF Gallery Section -->
+            <!-- Video/GIF Gallery Section -->
             <section class="video-gallery">
                 <div class="video-gallery-grid">
-                    <!-- Add your GIFs here - easy to duplicate this block -->
+                    <!-- Add your GIFs or MP4 videos here - easy to duplicate this block -->
+                    <!-- For GIFs, use <img> tag -->
                     <div class="video-gallery-item">
-                        <img src="assets/images/work/work-1.gif" alt="Work sample">
+                        <video autoplay loop muted playsinline>
+                            <source src="assets/videos/work/work-7.mp4" type="video/mp4">
+                        </video>
                     </div>
                     <div class="video-gallery-item">
-                        <img src="assets/images/work/work-2.gif" alt="Work sample">
+                        <video autoplay loop muted playsinline>
+                            <source src="assets/videos/work/work-8.mp4" type="video/mp4">
+                        </video>
                     </div>
                     <div class="video-gallery-item">
-                        <img src="assets/images/work/work-3.gif" alt="Work sample">
+                        <img src="assets/images/work/work-1.gif" alt="Wedding">
                     </div>
                     <div class="video-gallery-item">
-                        <img src="assets/images/work/work-4.gif" alt="Work sample">
+                        <img src="assets/images/work/work-2.gif" alt="Music">
                     </div>
                     <div class="video-gallery-item">
-                        <img src="assets/images/work/work-5.gif" alt="Work sample">
+                        <img src="assets/images/work/work-6.gif" alt="GDFG">
                     </div>
                     <div class="video-gallery-item">
-                        <img src="assets/images/work/work-6.gif" alt="Work sample">
+                        <img src="assets/images/work/work-3.gif" alt="Church Interview">
                     </div>
-                    <!-- To add more GIFs, just copy one of the video-gallery-item divs above and update the src -->
+                    <div class="video-gallery-item">
+                        <img src="assets/images/work/work-4.gif" alt="Corporate">
+                    </div>
+                    <div class="video-gallery-item">
+                        <img src="assets/images/work/work-5.gif" alt="ACB">
+                    </div>
+                    
+                    <!-- For MP4 videos, use <video> tag with autoplay, loop, muted, and playsinline -->
+                   
+                    <!-- To add more items:
+                        - For GIFs: <div class="video-gallery-item"><img src="path/to/file.gif" alt="Description"></div>
+                        - For MP4s: <div class="video-gallery-item"><video autoplay loop muted playsinline><source src="path/to/file.mp4" type="video/mp4"></video></div>
+                    -->
                 </div>
             </section>
 
@@ -84,20 +101,51 @@
                     <div class="posters-carousel" id="postersCarousel">
                         <!-- Add your movie posters here - easy to duplicate this block -->
                         <div class="poster-slide">
-                            <img src="assets/images/posters/poster-1.jpg" alt="[REDACTED]">
+                            <div class="poster-image-wrapper">
+                                <img src="assets/images/posters/poster-1.jpg" alt="showstorm" loading="eager">
+                            </div>
                         </div>
                         <div class="poster-slide">
-                            <img src="assets/images/posters/poster-2.jpg" alt="SPY MAN">
+                            <div class="poster-image-wrapper">
+                                <img src="assets/images/posters/poster-7.jpg" alt="No TIP TONY" loading="eager">
+                            </div>
                         </div>
                         <div class="poster-slide">
-                            <img src="assets/images/posters/poster-3.jpg" alt="TWO OF US">
+                            <div class="poster-image-wrapper">
+                                <img src="assets/images/posters/poster-8.jpg" alt="Driver" loading="eager">
+                            </div>
                         </div>
                         <div class="poster-slide">
-                            <img src="assets/images/posters/poster-4.jpg" alt="ABRAZAME BABY">
+                            <div class="poster-image-wrapper">
+                                <img src="assets/images/posters/poster-9.jpg" alt="One Small Step" loading="eager">
+                            </div>
                         </div>
                         <div class="poster-slide">
-                            <img src="assets/images/posters/poster-5.jpg" alt="DYSFUNCTIONAL D IS FOR FAMILY">
+                            <div class="poster-image-wrapper">
+                                <img src="assets/images/posters/poster-2.jpg" alt="Two OF US" loading="eager">
+                            </div>
                         </div>
+                        <div class="poster-slide">
+                            <div class="poster-image-wrapper">
+                                <img src="assets/images/posters/poster-3.jpg" alt="Spyman" loading="eager">
+                            </div>
+                        </div>
+                        <div class="poster-slide">
+                            <div class="poster-image-wrapper">
+                                <img src="assets/images/posters/poster-4.jpg" alt="ABRAZAME BABY" loading="eager">
+                            </div>
+                        </div>
+                        <div class="poster-slide">
+                            <div class="poster-image-wrapper">
+                                <img src="assets/images/posters/poster-5.jpg" alt="DYSFUNCTIONAL D IS FOR FAMILY" loading="eager">
+                            </div>
+                        </div>
+                        <div class="poster-slide">
+                            <div class="poster-image-wrapper">
+                                <img src="assets/images/posters/poster-6.jpg" alt="REDACTED" loading="eager">
+                            </div>
+                        </div>
+                        
                         <!-- To add more posters, just copy one of the poster-slide divs above and update the src and alt -->
                     </div>
                     <button class="carousel-btn carousel-btn-prev" id="prevBtn" aria-label="Previous poster">
@@ -125,11 +173,12 @@
                     <iframe 
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2602.1234567890!2d-123.0806155!3d49.2683796!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDnCsDE2JzA2LjIiTiAxMjPCsDA0JzUwLjIiVw!5e0!3m2!1sen!2sca!4v1234567890123!5m2!1sen!2sca" 
                         width="100%" 
-                        height="300" 
+                        height="100%" 
                         style="border:0;" 
                         allowfullscreen="" 
                         loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade">
+                        referrerpolicy="no-referrer-when-downgrade"
+                        title="Rainscope Filmworks Location Map">
                     </iframe>
                 </div>
                 <p>1868 Glen Dr #235<br>Vancouver, BC, V6A 4K4</p>

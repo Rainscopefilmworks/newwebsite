@@ -18,12 +18,12 @@ body {
 }
 
 :root {
-    --header-height: clamp(66px, calc(50px + 1rem), 70px);
+    --header-height: clamp(50px, calc(40px + 0.5rem), 55px);
 }
 
 @media (min-width: 769px) {
     :root {
-        --header-height: clamp(166px, calc(150px + 1rem), 180px);
+        --header-height: clamp(80px, calc(70px + 0.5rem), 90px);
     }
 }
 
@@ -36,7 +36,7 @@ body {
     background: rgba(23, 54, 51, 0.95);
     backdrop-filter: blur(10px);
     z-index: 1000;
-    padding: 0.5rem 0;
+    padding: 0.25rem 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -55,6 +55,8 @@ body {
     align-items: center;
     text-decoration: none;
     transition: opacity 0.3s ease;
+    overflow: hidden;
+    height: 100%;
 }
 
 .logo:hover {
@@ -62,8 +64,12 @@ body {
 }
 
 .logo-img {
-    height: 250px;
+    height: 100%;
+    max-height: 60px;
     width: auto;
+    display: block;
+    object-fit: contain;
+    object-position: left center;
 }
 
 .mobile-menu-toggle {
@@ -155,7 +161,7 @@ body {
         height: auto;
         min-height: auto;
         aspect-ratio: 16 / 9;
-        margin-top: var(--header-height);
+        margin-top: 0;
     }
     
     .hero-video-container {
@@ -169,6 +175,7 @@ body {
     .hero-content {
         margin-top: 0;
         padding: clamp(1rem, 3vw, 2rem);
+        padding-top: calc(var(--header-height) + clamp(1rem, 3vw, 2rem));
     }
     
     .header-container {
@@ -222,7 +229,11 @@ body {
     }
     
     .logo-img {
-        height: clamp(50px, 6vw, 60px);
+        height: 100%;
+        max-height: clamp(35px, 4.5vw, 45px);
+        width: auto;
+        object-fit: contain;
+        object-position: left center;
     }
     
     /* Overlay backdrop */
@@ -269,8 +280,8 @@ body {
 .hero {
     position: relative;
     width: 100%;
-    height: calc(100vh - var(--header-height));
-    margin-top: var(--header-height); /* Account for fixed header */
+    height: 100vh;
+    margin-top: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -300,6 +311,7 @@ body {
     text-align: center;
     color: white;
     padding: clamp(1.5rem, 4vw, 3rem);
+    padding-top: calc(var(--header-height) + clamp(1.5rem, 4vw, 3rem));
     max-width: min(90vw, 6000px);
     display: flex;
     flex-direction: column;
@@ -688,18 +700,55 @@ body {
     border-radius: clamp(6px, 1vw, 10px);
     overflow: hidden;
     width: 100%;
-    aspect-ratio: 21 / 9;
+    aspect-ratio: 42 / 9;
     position: relative;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    background-color: #f5f5f5;
+    isolation: isolate; /* Create stacking context for filters */
 }
 
-.map-container iframe {
+.map-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(245, 245, 245, 0) 0%, rgba(245, 245, 245, 0.1) 100%);
+    pointer-events: none;
+    z-index: 1;
+    border-radius: inherit;
+}
+
+.map-container iframe,
+.map-container .map-canvas {
     width: 100%;
     height: 100%;
     border: none;
     position: absolute;
     top: 0;
     left: 0;
+    display: block;
+}
+
+/* Black and white filter for map iframe */
+.map-container iframe {
+    filter: grayscale(100%) contrast(115%) brightness(92%);
+    -webkit-filter: grayscale(100%) contrast(115%) brightness(92%);
+    transition: filter 0.3s ease;
+    mix-blend-mode: normal;
+}
+
+/* Subtle hover effect */
+.map-container:hover iframe {
+    filter: grayscale(95%) contrast(110%) brightness(95%);
+    -webkit-filter: grayscale(95%) contrast(110%) brightness(95%);
+}
+
+/* Map canvas for JavaScript API (if used) */
+.map-container .map-canvas {
+    filter: none; /* Styling handled by Google Maps API */
+    border-radius: inherit;
 }
 
 .social-links {
@@ -884,6 +933,10 @@ body {
     display: block;
 }
 
+.video-gallery-item video {
+    background: #000;
+}
+
 /* Posters Section */
 .posters-section {
     margin-bottom: clamp(3rem, 6vw, 5rem);
@@ -900,53 +953,106 @@ body {
 
 .posters-carousel-wrapper {
     position: relative;
-    max-width: 100%;
+    width: 100%;
     margin: 0 auto;
+    overflow: hidden;
+    padding: clamp(2rem, 4vw, 3rem) 0;
 }
 
 .posters-carousel {
     display: flex;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
     gap: clamp(1.5rem, 3vw, 2.5rem);
     padding: 0 clamp(3rem, 6vw, 5rem);
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
+    align-items: center;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    scroll-behavior: auto;
+    position: relative;
+    transform: translateZ(0); /* Force GPU acceleration */
+    min-height: 1px; /* Ensure carousel has height for layout */
+}
+
+.posters-section {
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+    overflow: hidden;
 }
 
 .posters-carousel::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none;
 }
 
 .poster-slide {
     flex: 0 0 auto;
-    width: min(450px, 80vw);
-    scroll-snap-align: center;
-    opacity: 0.6;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    cursor: pointer;
+    width: auto;
+    max-width: min(400px, 75vw);
+    opacity: 0.7;
+    transition: opacity 0.4s ease;
+    padding: clamp(1rem, 2vw, 1.5rem) clamp(0.5rem, 1vw, 1rem);
+    pointer-events: none;
+    position: relative;
+    overflow: visible;
+    box-sizing: content-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    will-change: opacity;
+    visibility: visible;
 }
 
 .poster-slide.active {
     opacity: 1;
-    transform: scale(1.05);
+    pointer-events: auto;
+    z-index: 2;
+}
+
+.poster-image-wrapper {
+    display: inline-block;
+    max-width: 100%;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+    line-height: 0;
+    margin: 0;
+    padding: 0;
+    will-change: transform;
+    transform: translate3d(0, 0, 0); /* Force GPU acceleration, base state */
+}
+
+.poster-slide.active .poster-image-wrapper {
+    transform: translate3d(0, 0, 0) scale(1.08); /* Active state with scale */
 }
 
 .poster-slide img {
-    width: 100%;
+    width: auto;
     height: auto;
-    min-height: 600px;
-    object-fit: cover;
+    max-width: min(400px, 75vw);
+    max-height: 80vh;
     display: block;
-    border-radius: clamp(8px, 1.5vw, 12px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-    transition: transform 0.3s ease;
+    border-radius: clamp(4px, 0.8vw, 8px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    transition: box-shadow 0.3s ease;
+    object-fit: contain;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    visibility: visible;
+    opacity: 1;
 }
 
-.poster-slide:hover img {
-    transform: scale(1.02);
+.poster-slide.active img {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+.poster-slide:hover {
+    opacity: 0.9;
+}
+
+.poster-slide.active:hover {
+    opacity: 1;
 }
 
 .carousel-btn {
@@ -1026,14 +1132,19 @@ body {
     
     .posters-carousel {
         padding: 0 clamp(2.5rem, 8vw, 4rem);
+        gap: clamp(1rem, 2vw, 1.5rem);
     }
     
     .poster-slide {
-        width: min(300px, 85vw);
+        width: auto;
+        max-width: min(280px, 80vw);
+        padding: clamp(1rem, 2.5vw, 2rem) clamp(0.5rem, 2vw, 1rem);
+        overflow: visible;
     }
     
     .poster-slide img {
-        min-height: 450px;
+        max-width: min(280px, 80vw);
+        max-height: 70vh;
     }
     
     .carousel-btn {
@@ -1063,7 +1174,7 @@ body {
 
 .contact-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.5fr 1fr;
     gap: clamp(3rem, 6vw, 6rem);
     align-items: center;
     min-height: 60vh;
@@ -1072,12 +1183,21 @@ body {
 .contact-form-section {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .contact-form-wrapper {
     width: 100%;
-    max-width: min(500px, 100%);
+    max-width: 100%;
+}
+
+.contact-form-title {
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: clamp(1.5rem, 3vw, 2rem);
+    color: white;
 }
 
 .contact-form-container {
@@ -1201,7 +1321,12 @@ body {
 
 @media (max-width: 768px) {
     .contact-layout {
+        grid-template-columns: 1fr;
         gap: clamp(2rem, 4vw, 3rem);
+    }
+    
+    .contact-form-section {
+        justify-content: center;
     }
     
     .contact-images-section {

@@ -17,11 +17,15 @@ const CONFIG = {
         jpeg: {
             quality: 85,
             progressive: true,
-            mozjpeg: true
+            mozjpeg: true,
+            qualityLarge: 75, // More aggressive for large files
+            maxSize: 25 * 1024 * 1024 // 25MB
         },
         png: {
             quality: [0.7, 0.9],
-            speed: 4
+            speed: 4,
+            qualityLarge: [0.6, 0.8], // More aggressive for large files
+            maxSize: 25 * 1024 * 1024 // 25MB
         },
         webp: {
             quality: 85
@@ -30,8 +34,9 @@ const CONFIG = {
     videos: {
         mp4: {
             crf: 28,
+            crfLarge: 32, // More aggressive compression for large files
             preset: 'medium',
-            maxSize: 50 * 1024 * 1024 // 50MB
+            maxSize: 25 * 1024 * 1024 // 25MB - Cloudflare Pages limit
         }
     }
 };
@@ -74,39 +79,75 @@ async function optimizeJPEG(inputPath, outputPath) {
         const imageminMozjpeg = require('imagemin-mozjpeg');
 
         const originalSize = getFileSize(inputPath);
+        const originalSizeMB = parseFloat(originalSize);
         const dir = path.dirname(inputPath);
         const fileName = path.basename(inputPath);
         const tempPath = path.join(dir, `.${fileName}.tmp`);
+        
+        // Use more aggressive compression for large files (>25MB)
+        const isLarge = originalSizeMB > 25;
+        let quality = isLarge ? CONFIG.images.jpeg.qualityLarge : CONFIG.images.jpeg.quality;
 
         // Try using sharp first (simpler and more reliable)
         try {
-            await sharp(inputPath)
-                .jpeg({ 
-                    quality: CONFIG.images.jpeg.quality,
-                    progressive: CONFIG.images.jpeg.progressive,
-                    mozjpeg: CONFIG.images.jpeg.mozjpeg
-                })
-                .toFile(tempPath);
+            // For large files, try aggressive compression until under 25MB
+            let attempts = 0;
+            let finalPath = tempPath;
+            let bestSize = originalSizeMB;
+            let bestQuality = quality;
+            
+            while (attempts < 3 && bestSize > 25) {
+                await sharp(inputPath)
+                    .jpeg({ 
+                        quality: bestQuality,
+                        progressive: CONFIG.images.jpeg.progressive,
+                        mozjpeg: CONFIG.images.jpeg.mozjpeg
+                    })
+                    .toFile(finalPath);
 
-            // Check if optimized file is smaller before replacing
-            const tempSize = getFileSize(tempPath);
-            if (parseFloat(tempSize) < parseFloat(originalSize)) {
+                const tempSizeMB = parseFloat(getFileSize(finalPath));
+                
+                if (tempSizeMB < bestSize) {
+                    bestSize = tempSizeMB;
+                    if (tempSizeMB <= 25) {
+                        break; // Successfully optimized under 25MB
+                    }
+                    // Try more aggressive compression
+                    bestQuality = Math.max(60, bestQuality - 5);
+                    attempts++;
+                    if (attempts < 3 && bestSize > 25) {
+                        fs.unlinkSync(finalPath);
+                    }
+                } else {
+                    break; // Can't optimize further
+                }
+            }
+
+            // Check if we got a better result
+            if (bestSize < originalSizeMB) {
                 // Replace original with optimized version - preserve filename
-                fs.unlinkSync(inputPath);
-                fs.renameSync(tempPath, outputPath);
+                if (fs.existsSync(inputPath)) {
+                    fs.unlinkSync(inputPath);
+                }
+                if (fs.existsSync(finalPath)) {
+                    fs.renameSync(finalPath, outputPath);
+                }
                 
                 const optimizedSize = getFileSize(outputPath);
-                const savings = ((originalSize - optimizedSize) / originalSize * 100).toFixed(1);
+                const savings = ((originalSizeMB - parseFloat(optimizedSize)) / originalSizeMB * 100).toFixed(1);
                 
                 return {
                     success: true,
                     originalSize,
                     optimizedSize,
-                    savings: `${savings}%`
+                    savings: `${savings}%`,
+                    warning: parseFloat(optimizedSize) > 25 ? 'Still over 25MB but optimized' : null
                 };
             } else {
                 // Optimization didn't help - remove temp file and keep original
-                fs.unlinkSync(tempPath);
+                if (fs.existsSync(finalPath)) {
+                    fs.unlinkSync(finalPath);
+                }
                 
                 return {
                     success: true,
@@ -304,7 +345,12 @@ async function optimizeImage(filePath) {
                     fs.copyFileSync(backupPath, filePath);
                     console.log(chalk.yellow(`  ⊘ Skipped ${fileName} (${result.originalSize}MB - optimization didn't reduce size)`));
                 } else {
-                    console.log(chalk.green(`  ✓ Reduced from ${result.originalSize}MB to ${result.optimizedSize}MB (${result.savings} savings)`));
+                    const sizeMB = parseFloat(result.optimizedSize);
+                    if (sizeMB > 25) {
+                        console.log(chalk.yellow(`  ⚠ Reduced from ${result.originalSize}MB to ${result.optimizedSize}MB (${result.savings} savings) - WARNING: Still over 25MB!`));
+                    } else {
+                        console.log(chalk.green(`  ✓ Reduced from ${result.originalSize}MB to ${result.optimizedSize}MB (${result.savings} savings)`));
+                    }
                 }
                 // Remove backup if optimization was successful or skipped
                 fs.unlinkSync(backupPath);
@@ -328,9 +374,11 @@ async function optimizeImage(filePath) {
 async function optimizeMP4(inputPath, outputPath) {
     try {
         const originalSize = getFileSize(inputPath);
+        const originalSizeMB = parseFloat(originalSize);
         
-        // Check if file is already small enough
-        if (parseFloat(originalSize) < CONFIG.videos.mp4.maxSize / (1024 * 1024)) {
+        // Always optimize files over 20MB to ensure they stay well under 25MB
+        // Skip only if file is already well under limit (<20MB)
+        if (originalSizeMB < 20) {
             return {
                 success: true,
                 originalSize,
@@ -346,8 +394,12 @@ async function optimizeMP4(inputPath, outputPath) {
         const baseName = path.basename(inputPath, ext);
         const tempPath = path.join(dir, `${baseName}.tmp${ext}`);
 
+        // Use more aggressive compression for large files (>25MB)
+        const isLarge = originalSizeMB > 25;
+        const crf = isLarge ? CONFIG.videos.mp4.crfLarge : CONFIG.videos.mp4.crf;
+
         // Use ffmpeg to compress video - preserve original filename
-        const command = `ffmpeg -i "${inputPath}" -c:v libx264 -crf ${CONFIG.videos.mp4.crf} -preset ${CONFIG.videos.mp4.preset} -c:a aac -b:a 128k -movflags +faststart "${tempPath}" -y`;
+        const command = `ffmpeg -i "${inputPath}" -c:v libx264 -crf ${crf} -preset ${CONFIG.videos.mp4.preset} -c:a aac -b:a 128k -movflags +faststart "${tempPath}" -y`;
 
         execSync(command, { stdio: 'ignore' });
 
@@ -357,18 +409,45 @@ async function optimizeMP4(inputPath, outputPath) {
         }
 
         const optimizedSize = getFileSize(tempPath);
+        const optimizedSizeMB = parseFloat(optimizedSize);
         
-        if (parseFloat(optimizedSize) < parseFloat(originalSize)) {
+        // For large files, keep optimizing until under 25MB
+        if (isLarge && optimizedSizeMB > 25 && optimizedSizeMB < originalSizeMB) {
+            // File is still too large - try even more aggressive compression
+            fs.unlinkSync(tempPath);
+            const aggressiveCrf = Math.min(35, crf + 5);
+            const aggressiveCommand = `ffmpeg -i "${inputPath}" -c:v libx264 -crf ${aggressiveCrf} -preset ${CONFIG.videos.mp4.preset} -c:a aac -b:a 96k -movflags +faststart "${tempPath}" -y`;
+            execSync(aggressiveCommand, { stdio: 'ignore' });
+            
+            const aggressiveSize = getFileSize(tempPath);
+            const aggressiveSizeMB = parseFloat(aggressiveSize);
+            
+            if (aggressiveSizeMB < originalSizeMB) {
+                fs.unlinkSync(inputPath);
+                fs.renameSync(tempPath, outputPath);
+                const savings = ((originalSizeMB - aggressiveSizeMB) / originalSizeMB * 100).toFixed(1);
+                return {
+                    success: true,
+                    originalSize,
+                    optimizedSize: aggressiveSize,
+                    savings: `${savings}%`,
+                    warning: aggressiveSizeMB > 25 ? 'Still over 25MB but optimized' : null
+                };
+            }
+        }
+        
+        if (optimizedSizeMB < originalSizeMB) {
             // Replace original with optimized - preserve original filename
             fs.unlinkSync(inputPath); // Remove original
             fs.renameSync(tempPath, outputPath); // Rename temp to original name
-            const savings = ((originalSize - optimizedSize) / originalSize * 100).toFixed(1);
+            const savings = ((originalSizeMB - optimizedSizeMB) / originalSizeMB * 100).toFixed(1);
             
             return {
                 success: true,
                 originalSize,
                 optimizedSize,
-                savings: `${savings}%`
+                savings: `${savings}%`,
+                warning: optimizedSizeMB > 25 ? 'Still over 25MB but optimized' : null
             };
         } else {
             // Keep original if optimization didn't help
@@ -417,7 +496,12 @@ async function optimizeVideo(filePath) {
                 if (result.skipped) {
                     console.log(chalk.yellow(`  ⊘ Skipped (${result.originalSize}MB - already optimized or optimization didn't help)`));
                 } else {
-                    console.log(chalk.green(`  ✓ Reduced from ${result.originalSize}MB to ${result.optimizedSize}MB (${result.savings} savings)`));
+                    const sizeMB = parseFloat(result.optimizedSize);
+                    if (sizeMB > 25) {
+                        console.log(chalk.yellow(`  ⚠ Reduced from ${result.originalSize}MB to ${result.optimizedSize}MB (${result.savings} savings) - WARNING: Still over 25MB!`));
+                    } else {
+                        console.log(chalk.green(`  ✓ Reduced from ${result.originalSize}MB to ${result.optimizedSize}MB (${result.savings} savings)`));
+                    }
                 }
                 // Remove backup if optimization was successful
                 fs.unlinkSync(backupPath);

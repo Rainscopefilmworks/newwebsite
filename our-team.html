@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-CA">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Team - Meet the Filmmakers | Rainscope Filmworks</title>
     <meta name="description" content="Meet the talented team at Rainscope Filmworks. Our experienced filmmakers, directors, and creative professionals bring your vision to life.">
     <meta name="keywords" content="film team, filmmakers, directors, creative team, Vancouver film crew, production team">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
     <link rel="canonical" href="https://rainscopefilmworks.com/our-team.html">
     
     <!-- Open Graph / Facebook -->
@@ -14,6 +16,11 @@
     <meta property="og:title" content="Our Team - Meet the Filmmakers | Rainscope Filmworks">
     <meta property="og:description" content="Meet the talented team at Rainscope Filmworks. Our experienced filmmakers and creative professionals.">
     <meta property="og:image" content="https://rainscopefilmworks.com/assets/images/logo.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Rainscope Filmworks Team">
+    <meta property="og:locale" content="en_CA">
+    <meta property="og:site_name" content="Rainscope Filmworks">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
@@ -21,6 +28,16 @@
     <meta name="twitter:title" content="Our Team - Meet the Filmmakers | Rainscope Filmworks">
     <meta name="twitter:description" content="Meet the talented team at Rainscope Filmworks. Our experienced filmmakers and creative professionals.">
     <meta name="twitter:image" content="https://rainscopefilmworks.com/assets/images/logo.png">
+    <meta name="twitter:image:alt" content="Rainscope Filmworks Team">
+    
+    <!-- Resource Hints -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google.com">
+    <link rel="dns-prefetch" href="https://www.google.com">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" as="image" href="assets/images/logo.png">
     
     <link rel="stylesheet" href="assets/css/styles.css">
     
@@ -32,13 +49,72 @@
       gtag('js', new Date());
       gtag('config', 'G-7RRQQ33JKM');
     </script>
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "AboutPage",
+      "name": "Our Team",
+      "description": "Meet the talented team at Rainscope Filmworks. Our experienced filmmakers, directors, and creative professionals bring your vision to life.",
+      "url": "https://rainscopefilmworks.com/our-team.html",
+      "mainEntity": {
+        "@type": "Organization",
+        "name": "Rainscope Filmworks",
+        "employee": [
+          {
+            "@type": "Person",
+            "name": "Jackson Lee",
+            "jobTitle": "Founder"
+          },
+          {
+            "@type": "Person",
+            "name": "Jay Parsons",
+            "jobTitle": "Creative Director"
+          },
+          {
+            "@type": "Person",
+            "name": "Cristian Oriak",
+            "jobTitle": "Director Of Photography"
+          },
+          {
+            "@type": "Person",
+            "name": "Lava Sood",
+            "jobTitle": "Director Of Post And Photography"
+          },
+          {
+            "@type": "Person",
+            "name": "Hans Potter",
+            "jobTitle": "Sales"
+          }
+        ]
+      },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://rainscopefilmworks.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Our Team",
+            "item": "https://rainscopefilmworks.com/our-team.html"
+          }
+        ]
+      }
+    }
+    </script>
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-container">
             <a href="index.html" class="logo">
-                <img src="assets/images/logo.png" alt="Rainscope Filmworks" class="logo-img">
+                <img src="assets/images/logo.png" alt="Rainscope Filmworks" class="logo-img" width="120" height="40" fetchpriority="high">
             </a>
             <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
                 <span class="hamburger-line"></span>
@@ -63,7 +139,7 @@
             <div class="team-grid">
                 <div class="team-member">
                     <div class="team-member-image">
-                        <img src="assets/images/team/jackson-lee.jpg" alt="Jackson Lee">
+                        <img src="assets/images/team/jackson-lee.jpg" alt="Jackson Lee" loading="lazy">
                     </div>
                     <h3 class="team-member-name">Jackson Lee</h3>
                     <p class="team-member-title">Founder</p>
@@ -71,7 +147,7 @@
                 
                 <div class="team-member">
                     <div class="team-member-image">
-                        <img src="assets/images/team/jay-parsons.jpg" alt="Jay Parsons">
+                        <img src="assets/images/team/jay-parsons.jpg" alt="Jay Parsons" loading="lazy">
                     </div>
                     <h3 class="team-member-name">Jay Parsons</h3>
                     <p class="team-member-title">Creative Director</p>
@@ -79,7 +155,7 @@
                 
                 <div class="team-member">
                     <div class="team-member-image">
-                        <img src="assets/images/team/cristian-oriak.jpg" alt="Cristian Oriak">
+                        <img src="assets/images/team/cristian-oriak.jpg" alt="Cristian Oriak" loading="lazy">
                     </div>
                     <h3 class="team-member-name">Cristian Oriak</h3>
                     <p class="team-member-title">Director Of Photography</p>
@@ -87,7 +163,7 @@
                 
                 <div class="team-member">
                     <div class="team-member-image">
-                        <img src="assets/images/team/lava-sood.jpg" alt="Lava Sood">
+                        <img src="assets/images/team/lava-sood.jpg" alt="Lava Sood" loading="lazy">
                     </div>
                     <h3 class="team-member-name">Lava Sood</h3>
                     <p class="team-member-title">Director Of Post And Photography</p>
@@ -95,7 +171,7 @@
                 
                 <div class="team-member">
                     <div class="team-member-image">
-                        <img src="assets/images/team/hans-potter.jpg" alt="Hans Potter">
+                        <img src="assets/images/team/hans-potter.jpg" alt="Hans Potter" loading="lazy">
                     </div>
                     <h3 class="team-member-name">Hans Potter</h3>
                     <p class="team-member-title">Sales</p>
@@ -131,6 +207,7 @@
             <div class="footer-section footer-contact">
                 <h4>CONTACT</h4>
                 <p>
+                    <a href="tel:604-910-2845">604-910-2845</a><br>
                     <a href="mailto:Hello@rainscopefilmworks.com">Hello@Rainscopefilmworks.com</a><br>
                     <a href="mailto:rentals@rainscopefilmworks.com">Rentals@RainscopeFilmworks.com</a>
                 </p>

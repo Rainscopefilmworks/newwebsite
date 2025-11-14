@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-CA">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us - Get in Touch | Rainscope Filmworks</title>
     <meta name="description" content="Contact Rainscope Filmworks in Vancouver, BC. Get in touch for video production, post-production, photography, design, or equipment rental inquiries.">
     <meta name="keywords" content="contact Rainscope Filmworks, Vancouver film production contact, video production inquiry, film equipment rental contact">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
     <link rel="canonical" href="https://rainscopefilmworks.com/contact.html">
     
     <!-- Open Graph / Facebook -->
@@ -14,6 +16,11 @@
     <meta property="og:title" content="Contact Us - Get in Touch | Rainscope Filmworks">
     <meta property="og:description" content="Contact Rainscope Filmworks in Vancouver, BC. Get in touch for video production, post-production, photography, design, or equipment rental inquiries.">
     <meta property="og:image" content="https://rainscopefilmworks.com/assets/images/logo.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Contact Rainscope Filmworks">
+    <meta property="og:locale" content="en_CA">
+    <meta property="og:site_name" content="Rainscope Filmworks">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
@@ -21,6 +28,18 @@
     <meta name="twitter:title" content="Contact Us - Get in Touch | Rainscope Filmworks">
     <meta name="twitter:description" content="Contact Rainscope Filmworks in Vancouver, BC. Get in touch for video production, post-production, photography, design, or equipment rental inquiries.">
     <meta name="twitter:image" content="https://rainscopefilmworks.com/assets/images/logo.png">
+    <meta name="twitter:image:alt" content="Contact Rainscope Filmworks">
+    
+    <!-- Resource Hints -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://tally.so">
+    <link rel="dns-prefetch" href="https://tally.so">
+    <link rel="preconnect" href="https://www.google.com">
+    <link rel="dns-prefetch" href="https://www.google.com">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" as="image" href="assets/images/logo.png">
     
     <link rel="stylesheet" href="assets/css/styles.css">
     
@@ -32,13 +51,55 @@
       gtag('js', new Date());
       gtag('config', 'G-7RRQQ33JKM');
     </script>
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ContactPage",
+      "name": "Contact Us",
+      "description": "Contact Rainscope Filmworks in Vancouver, BC. Get in touch for video production, post-production, photography, design, or equipment rental inquiries.",
+      "url": "https://rainscopefilmworks.com/contact.html",
+      "mainEntity": {
+        "@type": "LocalBusiness",
+        "name": "Rainscope Filmworks",
+        "telephone": "604-910-2845",
+        "email": "Hello@rainscopefilmworks.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "1868 Glen Dr #235",
+          "addressLocality": "Vancouver",
+          "addressRegion": "BC",
+          "postalCode": "V6A 4K4",
+          "addressCountry": "CA"
+        }
+      },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://rainscopefilmworks.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Contact",
+            "item": "https://rainscopefilmworks.com/contact.html"
+          }
+        ]
+      }
+    }
+    </script>
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-container">
             <a href="index.html" class="logo">
-                <img src="assets/images/logo.png" alt="Rainscope Filmworks" class="logo-img">
+                <img src="assets/images/logo.png" alt="Rainscope Filmworks" class="logo-img" width="120" height="40" fetchpriority="high">
             </a>
             <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
                 <span class="hamburger-line"></span>
@@ -72,13 +133,13 @@
                 <!-- Circular Images Section (Right) -->
                 <div class="contact-images-section">
                     <div class="contact-circle-image contact-circle-1">
-                        <img src="assets/images/contact/contact-1.jpg" alt="Rainscope Filmworks team member">
+                        <img src="assets/images/contact/contact-1.jpg" alt="Rainscope Filmworks team member" loading="lazy">
                     </div>
                     <div class="contact-circle-image contact-circle-2">
-                        <img src="assets/images/contact/contact-2.jpg" alt="Rainscope Filmworks team member">
+                        <img src="assets/images/contact/contact-2.jpg" alt="Rainscope Filmworks team member" loading="lazy">
                     </div>
                     <div class="contact-circle-image contact-circle-3">
-                        <img src="assets/images/contact/contact-3.jpg" alt="Rainscope Filmworks team member">
+                        <img src="assets/images/contact/contact-3.jpg" alt="Rainscope Filmworks team member" loading="lazy">
                     </div>
                 </div>
             </div>

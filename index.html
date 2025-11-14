@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-CA">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,8 @@
     <meta name="description" content="Rainscope Filmworks is a creative production company based in Vancouver, BC. We specialize in video production, post-production, photography, design, and equipment rentals. Professional filmmaking services with a Pacific Northwest perspective.">
     <meta name="keywords" content="video production, film production, post-production, photography, Vancouver, BC, film equipment rental, creative production company">
     <meta name="author" content="Rainscope Filmworks">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
     <link rel="canonical" href="https://rainscopefilmworks.com/">
     
     <!-- Favicon -->
@@ -31,6 +33,11 @@
     <meta property="og:title" content="Rainscope Filmworks - A Creative Production Company">
     <meta property="og:description" content="A creative production company based in Vancouver, BC. Specializing in video production, post-production, photography, design, and equipment rentals.">
     <meta property="og:image" content="https://rainscopefilmworks.com/assets/images/logo.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Rainscope Filmworks - A Creative Production Company">
+    <meta property="og:locale" content="en_CA">
+    <meta property="og:site_name" content="Rainscope Filmworks">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
@@ -38,6 +45,19 @@
     <meta name="twitter:title" content="Rainscope Filmworks - A Creative Production Company">
     <meta name="twitter:description" content="A creative production company based in Vancouver, BC. Specializing in video production, post-production, photography, design, and equipment rentals.">
     <meta name="twitter:image" content="https://rainscopefilmworks.com/assets/images/logo.png">
+    <meta name="twitter:image:alt" content="Rainscope Filmworks Logo">
+    
+    <!-- Resource Hints -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://tally.so">
+    <link rel="dns-prefetch" href="https://tally.so">
+    <link rel="preconnect" href="https://www.google.com">
+    <link rel="dns-prefetch" href="https://www.google.com">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" as="image" href="assets/images/logo.png">
+    <link rel="preload" as="video" href="assets/videos/hero-video.mp4" type="video/mp4">
     
     <link rel="stylesheet" href="assets/css/styles.css">
     
@@ -87,13 +107,27 @@
       }
     }
     </script>
+    
+    <!-- Breadcrumb Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://rainscopefilmworks.com/"
+      }]
+    }
+    </script>
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-container">
             <a href="index.html" class="logo">
-                <img src="assets/images/logo.png" alt="Rainscope Filmworks" class="logo-img">
+                <img src="assets/images/logo.png" alt="Rainscope Filmworks" class="logo-img" width="120" height="40" fetchpriority="high">
             </a>
             <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
                 <span class="hamburger-line"></span>
@@ -113,7 +147,7 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-video-container">
-            <video autoplay muted loop playsinline>
+            <video autoplay muted loop playsinline preload="auto" fetchpriority="high">
                 <source src="assets/videos/hero-video.mp4" type="video/mp4">
             </video>
         </div>
@@ -192,13 +226,13 @@
                     </div>
                 </a>
                 <a href="our-work.html" class="portfolio-preview-item">
-                    <img src="assets/images/work/work-1.gif" alt="Wedding video production - Cinematic wedding film by Rainscope Filmworks">
+                    <img src="assets/images/work/work-1.gif" alt="Wedding video production - Cinematic wedding film by Rainscope Filmworks" loading="lazy">
                     <div class="portfolio-overlay">
                         <span class="portfolio-label">View Project</span>
                     </div>
                 </a>
                 <a href="our-work.html" class="portfolio-preview-item">
-                    <img src="assets/images/work/work-6.gif" alt="Creative video production project - Rainscope Filmworks portfolio">
+                    <img src="assets/images/work/work-6.gif" alt="Creative video production project - Rainscope Filmworks portfolio" loading="lazy">
                     <div class="portfolio-overlay">
                         <span class="portfolio-label">View Project</span>
                     </div>

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-CA">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Work - Film Portfolio & Productions | Rainscope Filmworks</title>
     <meta name="description" content="Explore our portfolio of film productions, video work, and creative projects. Rainscope Filmworks showcases our best work in video production, post-production, and filmmaking.">
     <meta name="keywords" content="film portfolio, video production portfolio, film productions, video work, Vancouver film company, production reel">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
     <link rel="canonical" href="https://rainscopefilmworks.com/our-work.html">
     
     <!-- Open Graph / Facebook -->
@@ -14,6 +16,11 @@
     <meta property="og:title" content="Our Work - Film Portfolio | Rainscope Filmworks">
     <meta property="og:description" content="Explore our portfolio of film productions, video work, and creative projects.">
     <meta property="og:image" content="https://rainscopefilmworks.com/assets/images/logo.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Rainscope Filmworks Portfolio">
+    <meta property="og:locale" content="en_CA">
+    <meta property="og:site_name" content="Rainscope Filmworks">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
@@ -21,6 +28,16 @@
     <meta name="twitter:title" content="Our Work - Film Portfolio | Rainscope Filmworks">
     <meta name="twitter:description" content="Explore our portfolio of film productions, video work, and creative projects.">
     <meta name="twitter:image" content="https://rainscopefilmworks.com/assets/images/logo.png">
+    <meta name="twitter:image:alt" content="Rainscope Filmworks Portfolio">
+    
+    <!-- Resource Hints -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google.com">
+    <link rel="dns-prefetch" href="https://www.google.com">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" as="image" href="assets/images/logo.png">
     
     <link rel="stylesheet" href="assets/css/styles.css">
     
@@ -32,13 +49,61 @@
       gtag('js', new Date());
       gtag('config', 'G-7RRQQ33JKM');
     </script>
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Our Work - Film Portfolio",
+      "description": "Explore our portfolio of film productions, video work, and creative projects. Rainscope Filmworks showcases our best work in video production, post-production, and filmmaking.",
+      "url": "https://rainscopefilmworks.com/our-work.html",
+      "mainEntity": {
+        "@type": "ItemList",
+        "itemListElement": [
+          {
+            "@type": "CreativeWork",
+            "name": "Video Production Showcase",
+            "description": "Professional film production by Rainscope Filmworks"
+          },
+          {
+            "@type": "CreativeWork",
+            "name": "Wedding Video Production",
+            "description": "Cinematic wedding film by Rainscope Filmworks"
+          },
+          {
+            "@type": "CreativeWork",
+            "name": "Creative Video Production",
+            "description": "Creative project by Rainscope Filmworks"
+          }
+        ]
+      },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://rainscopefilmworks.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Our Work",
+            "item": "https://rainscopefilmworks.com/our-work.html"
+          }
+        ]
+      }
+    }
+    </script>
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-container">
             <a href="index.html" class="logo">
-                <img src="assets/images/logo.png" alt="Rainscope Filmworks" class="logo-img">
+                <img src="assets/images/logo.png" alt="Rainscope Filmworks" class="logo-img" width="120" height="40" fetchpriority="high">
             </a>
             <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
                 <span class="hamburger-line"></span>
@@ -76,22 +141,22 @@
                         </video>
                     </div>
                     <div class="video-gallery-item">
-                        <img src="assets/images/work/work-1.gif" alt="Wedding video production - Cinematic wedding film by Rainscope Filmworks">
+                        <img src="assets/images/work/work-1.gif" alt="Wedding video production - Cinematic wedding film by Rainscope Filmworks" loading="lazy">
                     </div>
                     <div class="video-gallery-item">
-                        <img src="assets/images/work/work-2.gif" alt="Music video production - Creative music video by Rainscope Filmworks">
+                        <img src="assets/images/work/work-2.gif" alt="Music video production - Creative music video by Rainscope Filmworks" loading="lazy">
                     </div>
                     <div class="video-gallery-item">
-                        <img src="assets/images/work/work-6.gif" alt="Creative video production project - Rainscope Filmworks portfolio">
+                        <img src="assets/images/work/work-6.gif" alt="Creative video production project - Rainscope Filmworks portfolio" loading="lazy">
                     </div>
                     <div class="video-gallery-item">
-                        <img src="assets/images/work/work-3.gif" alt="Church interview video production - Documentary-style interview by Rainscope Filmworks">
+                        <img src="assets/images/work/work-3.gif" alt="Church interview video production - Documentary-style interview by Rainscope Filmworks" loading="lazy">
                     </div>
                     <div class="video-gallery-item">
-                        <img src="assets/images/work/work-4.gif" alt="Corporate video production - Professional corporate video by Rainscope Filmworks">
+                        <img src="assets/images/work/work-4.gif" alt="Corporate video production - Professional corporate video by Rainscope Filmworks" loading="lazy">
                     </div>
                     <div class="video-gallery-item">
-                        <img src="assets/images/work/work-5.gif" alt="Video production showcase - Creative project by Rainscope Filmworks">
+                        <img src="assets/images/work/work-5.gif" alt="Video production showcase - Creative project by Rainscope Filmworks" loading="lazy">
                     </div>
                     
                     <!-- For MP4 videos, use <video> tag with autoplay, loop, muted, and playsinline -->
@@ -200,6 +265,7 @@
             <div class="footer-section footer-contact">
                 <h4>CONTACT</h4>
                 <p>
+                    <a href="tel:604-910-2845">604-910-2845</a><br>
                     <a href="mailto:Hello@rainscopefilmworks.com">Hello@Rainscopefilmworks.com</a><br>
                     <a href="mailto:rentals@rainscopefilmworks.com">Rentals@RainscopeFilmworks.com</a>
                 </p>

@@ -766,6 +766,24 @@
        max-height: 90vh;
      }
    }
+   
+   /* Hide FAQ button when cart is open on mobile */
+   @media (max-width: 720px) {
+     .rentals-wrapper .rs-cart[data-open="true"] ~ .rentals-faq-float-btn {
+       opacity: 0;
+       visibility: hidden;
+       pointer-events: none;
+       transform: translateY(20px);
+       transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+     }
+     
+     .rentals-faq-float-btn.cart-open {
+       opacity: 0 !important;
+       visibility: hidden !important;
+       pointer-events: none !important;
+       transform: translateY(20px) !important;
+     }
+   }
 
    /* Floating FAQ Button */
    .rentals-faq-float-btn {
@@ -1212,12 +1230,20 @@
         document.documentElement.classList.add('rs-lock');
         document.body.classList.add('rs-lock');
         $openCart?.setAttribute("aria-expanded","true");
+        // Close FAQ and hide FAQ button on mobile when cart opens
+        const faqWrapper = document.getElementById('rentalsFaqWrapper');
+        const faqFloatBtn = document.getElementById('rentalsFaqFloatBtn');
+        if (faqWrapper) faqWrapper.classList.remove('visible');
+        if (faqFloatBtn) faqFloatBtn.classList.add('cart-open');
       }
       function closeCart(){
         $cartPanel.dataset.open = "false";
         document.documentElement.classList.remove('rs-lock');
         document.body.classList.remove('rs-lock');
         $openCart?.setAttribute("aria-expanded","false");
+        // Show FAQ button again when cart closes
+        const faqFloatBtn = document.getElementById('rentalsFaqFloatBtn');
+        if (faqFloatBtn) faqFloatBtn.classList.remove('cart-open');
       }
 
       function addToCart(variationId, name, priceMoney){

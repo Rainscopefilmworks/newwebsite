@@ -183,6 +183,11 @@ body {
         padding-top: calc(var(--header-height) + clamp(1rem, 3vw, 2rem));
     }
     
+    .hero-buttons {
+        bottom: clamp(6rem, 10vw, 10rem);
+        padding: 0 clamp(1rem, 3vw, 2rem);
+    }
+    
     .header-container {
         padding: 0 clamp(1.25rem, 3.5vw, 2rem);
         position: relative;
@@ -342,12 +347,19 @@ body {
 }
 
 .hero-buttons {
+    position: absolute;
+    bottom: clamp(8rem, 12vw, 12rem);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
     display: flex;
     gap: clamp(1rem, 2vw, 2rem);
-    margin-top: clamp(3rem, 6vw, 5rem);
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    max-width: min(90vw, 6000px);
+    padding: 0 clamp(1.5rem, 4vw, 3rem);
 }
 
 .btn-primary {

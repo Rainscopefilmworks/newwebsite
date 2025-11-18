@@ -155,8 +155,9 @@ body {
 }
 
 /* Hide shop link from navigation */
-.nav-link[href="shop.html"] {
-    display: none;
+.nav-link[href="shop.html"],
+a.nav-link[href="shop.html"] {
+    display: none !important;
 }
 
 /* Responsive Breakpoints */
@@ -242,6 +243,12 @@ body {
         opacity: 1;
         padding-left: 0.5rem;
         transition: padding-left 0.3s ease;
+    }
+    
+    /* Hide shop link from navigation on mobile */
+    .nav-link[href="shop.html"],
+    a.nav-link[href="shop.html"] {
+        display: none !important;
     }
     
     .logo {

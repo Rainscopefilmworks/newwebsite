@@ -37,14 +37,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Indicator click handlers
-    indicators.forEach((indicator, index) => {
-        indicator.addEventListener('click', () => {
-            currentSlide = index;
-            showSlide(currentSlide);
-            stopSlider();
-            startSlider();
+    if (indicators && indicators.length > 0) {
+        indicators.forEach((indicator, index) => {
+            if (indicator) {
+                indicator.addEventListener('click', () => {
+                    currentSlide = index;
+                    showSlide(currentSlide);
+                    stopSlider();
+                    startSlider();
+                });
+            }
         });
-    });
+    }
 
     // Pause on hover
     const testimonialsSection = document.querySelector('.testimonials');

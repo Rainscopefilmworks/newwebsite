@@ -465,7 +465,7 @@
     <!-- Main Content -->
     <main class="page-content">
         <div class="shop-wrapper">
-            <h1>Shop</h1>
+           
             
             <div id="rs-app" class="rs">
               <header class="rs-top rs-shell">
@@ -584,10 +584,10 @@
         </div>
     </footer>
 
-    <script src="assets/js/script.js"></script>
+    <script src="assets/js/script.js" data-cfasync="false"></script>
     
-    <!-- Square Web Payments SDK -->
-    <script type="text/javascript" src="https://js.squareup.com/v2/paymentform" onload="window.squareScriptLoaded = true"></script>
+    <!-- Square Web Payments SDK - Disable Rocket Loader to prevent interference -->
+    <script type="text/javascript" src="https://js.squareup.com/v2/paymentform" data-cfasync="false" onload="window.squareScriptLoaded = true"></script>
     
     <script>
     // Wait for DOM to be fully ready, then initialize

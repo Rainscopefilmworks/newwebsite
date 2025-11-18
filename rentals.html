@@ -1572,6 +1572,11 @@
         // >>> UPDATED: note shows pickup/dropoff dates and days in between
         const note = `Rental: Pickup ${startStr}, Dropoff ${endStr} (${daysActual} day${daysActual !== 1 ? 's' : ''} in between, billed ${daysBill}). ${noteExtra || ""}`.trim();
 
+        // Calculate service date (first billable day = day after pickup)
+        const pickupDate = parseDate(startStr);
+        const serviceDate = pickupDate ? new Date(pickupDate.getTime() + MS) : null;
+        const serviceDateStr = serviceDate ? toISO(serviceDate) : null;
+
         setStatus("Submitting estimate…");
         const res = await fetch(`${PROXY_BASE}/api/estimate`, {
           method: "POST",
@@ -1583,8 +1588,10 @@
             note,
             publish: true,
             delivery_method: "EMAIL",
-            // IMPORTANT: send start_date for the invoice payment request due date (pickup date)
-            start_date: startStr
+            // start_date: invoice payment due date (pickup date)
+            start_date: startStr,
+            // service_date: first billable day (day after pickup)
+            service_date: serviceDateStr
           })
         });
 

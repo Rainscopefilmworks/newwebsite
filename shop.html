@@ -335,7 +335,25 @@
     }
     .shop-wrapper #card-container{
       margin-bottom:var(--rs-pad);
-      min-height:120px;
+    }
+    .shop-wrapper #card-container > div{
+      padding:var(--rs-pad);
+      border:1px solid var(--rs-border);
+      border-radius:6px;
+      background:#fff;
+    }
+    .shop-wrapper .sq-input{
+      font-size:16px;
+      padding:12px;
+      border:1px solid #e6e7ea;
+      border-radius:6px;
+      width:100%;
+      box-sizing:border-box;
+    }
+    .shop-wrapper .sq-input:focus{
+      outline:none;
+      border-color:var(--rs-accent);
+      box-shadow:0 0 0 3px rgba(43,62,94,0.1);
     }
 
     .shop-wrapper .rs-toast{
@@ -478,7 +496,14 @@
                     <!-- Square Payment Form -->
                     <div class="square-payment-form">
                       <label>Payment Information *</label>
-                      <div id="card-container"></div>
+                      <div id="card-container">
+                        <div id="sq-card-number"></div>
+                        <div style="display: flex; gap: 8px; margin-top: 8px;">
+                          <div id="sq-expiration-date" style="flex: 1;"></div>
+                          <div id="sq-cvv" style="flex: 1;"></div>
+                        </div>
+                        <div id="sq-postal-code" style="margin-top: 8px;"></div>
+                      </div>
                     </div>
 
                     <div class="rs-actions">
@@ -598,11 +623,16 @@
       let payments = null; // Square Payments instance
 
       // Initialize Square Payments
-      // NOTE: Replace APPLICATION_ID with your Square Application ID
-      // You can find this in your Square Developer Dashboard
-      const APPLICATION_ID = "YOUR_SQUARE_APPLICATION_ID"; // TODO: Replace with actual ID
+      // ============================================
+      // CONFIGURATION:
+      // 1. Application ID is configured below
+      // 2. In Square Developer Dashboard, add your domain to allowed origins:
+      //    - Go to your app → Settings → Point of Sale API (or Web Payments SDK)
+      //    - Add: https://rainscopefilmworks.com (and http://localhost for testing)
+      // ============================================
+      const APPLICATION_ID = "sq0idp-Q4C4Lb_w5aFXTJuE_2ebgg"; // Square Application ID
       
-      if (APPLICATION_ID && APPLICATION_ID !== "YOUR_SQUARE_APPLICATION_ID") {
+      if (APPLICATION_ID) {
         payments = new SqPaymentForm({
           applicationId: APPLICATION_ID,
           locationId: LOCATION_ID,

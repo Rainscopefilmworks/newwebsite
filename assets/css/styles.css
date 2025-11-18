@@ -154,6 +154,11 @@ body {
     width: 100%;
 }
 
+/* Hide shop link from navigation */
+.nav-link[href="shop.html"] {
+    display: none;
+}
+
 /* Responsive Breakpoints */
 @media (max-width: 1024px) {
     .services-content {

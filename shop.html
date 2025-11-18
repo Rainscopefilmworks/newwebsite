@@ -641,19 +641,27 @@
         window.squareScriptReady = false;
         const script = document.createElement('script');
         script.type = 'text/javascript';
-        script.src = 'https://js.squareup.com/v2/paymentform';
+        // Updated Square Web Payments SDK URL (v1)
+        script.src = 'https://web.squarecdn.com/v1/square.js';
         script.setAttribute('data-cfasync', 'false');
         script.async = false; // Load synchronously to ensure it's available
+        script.crossOrigin = 'anonymous';
         script.onload = function() {
           window.squareScriptLoaded = true;
           window.squareScriptReady = true;
           console.log('Square Web Payments SDK loaded successfully');
-          if (typeof window.onSquareScriptLoaded === 'function') {
-            window.onSquareScriptLoaded();
+          // Check for both possible Square SDK objects
+          if (typeof SqPaymentForm !== 'undefined' || (window.Square && window.Square.payments)) {
+            if (typeof window.onSquareScriptLoaded === 'function') {
+              window.onSquareScriptLoaded();
+            }
+          } else {
+            console.warn('Square script loaded but SqPaymentForm not found. Available:', Object.keys(window).filter(k => k.toLowerCase().includes('square')));
           }
         };
-        script.onerror = function() {
-          console.error('Failed to load Square Web Payments SDK - check network connection and CORS settings');
+        script.onerror = function(error) {
+          console.error('Failed to load Square Web Payments SDK:', error);
+          console.error('Check: 1) Network connection, 2) Domain whitelisted in Square Dashboard, 3) Ad blockers');
           window.squareScriptLoadError = true;
           window.squareScriptReady = false;
         };
@@ -672,7 +680,8 @@
       // Wait for Square script to load with longer timeout
       let squareLoadAttempts = 0;
       const maxAttempts = 50; // 5 seconds total (in case of slow connection)
-      while (typeof SqPaymentForm === 'undefined' && squareLoadAttempts < maxAttempts) {
+      // Check for both old (SqPaymentForm) and new (Square.payments) API
+      while (typeof SqPaymentForm === 'undefined' && !(window.Square && window.Square.payments) && squareLoadAttempts < maxAttempts) {
         await new Promise(resolve => setTimeout(resolve, 100));
         squareLoadAttempts++;
         // Check if script failed to load
@@ -684,9 +693,12 @@
       
       console.log('Square script check complete:', {
         SqPaymentForm: typeof SqPaymentForm,
+        Square: typeof window.Square,
+        SquarePayments: window.Square && typeof window.Square.payments,
         squareScriptLoaded: window.squareScriptLoaded,
         squareScriptReady: window.squareScriptReady,
-        attempts: squareLoadAttempts
+        attempts: squareLoadAttempts,
+        availableGlobals: Object.keys(window).filter(k => k.toLowerCase().includes('square'))
       });
       
       (async () => {
@@ -748,21 +760,31 @@
       
       // Initialize Square payment form (after waiting for script above)
       if (APPLICATION_ID) {
+        // Check for old SqPaymentForm API or new Square.payments API
         if (typeof SqPaymentForm !== 'undefined') {
           try {
             initializeSquarePayments();
           } catch (sqError) {
             console.error("Error initializing Square payment form:", sqError);
+            console.error("Square SDK available objects:", Object.keys(window).filter(k => k.toLowerCase().includes('square')));
             if ($cardContainer) {
-              $cardContainer.innerHTML = "<p style='color:#ef4444;font-size:12px;'>Payment form initialization failed. Please refresh the page.</p>";
+              $cardContainer.innerHTML = "<p style='color:#ef4444;font-size:12px;'>Payment form initialization failed. Check console for details.</p>";
             }
+          }
+        } else if (window.Square && window.Square.payments) {
+          console.warn("New Square API detected but SqPaymentForm not found. You may need to update the initialization code.");
+          console.log("Available Square objects:", Object.keys(window.Square));
+          if ($cardContainer) {
+            $cardContainer.innerHTML = "<p style='color:#ef4444;font-size:12px;'>Square SDK loaded but API may have changed. Check console.</p>";
           }
         } else {
           console.error("Square Web Payments SDK not available. Payment form will not work.");
           console.log("Square script loaded:", window.squareScriptLoaded);
           console.log("SqPaymentForm type:", typeof SqPaymentForm);
+          console.log("Square object:", typeof window.Square);
+          console.log("Available globals with 'square':", Object.keys(window).filter(k => k.toLowerCase().includes('square')));
           if ($cardContainer) {
-            $cardContainer.innerHTML = "<p style='color:#ef4444;font-size:12px;'>Payment form failed to load. Please check your internet connection and refresh the page.</p>";
+            $cardContainer.innerHTML = "<p style='color:#ef4444;font-size:12px;'>Payment form failed to load. Check: 1) Domain whitelisted in Square Dashboard, 2) Ad blockers disabled, 3) Console for details.</p>";
           }
         }
       } else {

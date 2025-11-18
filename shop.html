@@ -610,6 +610,8 @@
       
       // Debug mode: set to true to bypass location filtering
       const DEBUG_MODE = false;
+      // Temporary: set to true to show all items regardless of category (for debugging)
+      const DEBUG_SHOW_ALL_CATEGORIES = false;
 
       // DOM
       const $cats = document.getElementById("rs-cats-list");
@@ -824,6 +826,12 @@
           console.log(`Found ${categories.length} categories and ${itemsRaw.length} items`);
 
           const nameById = Object.fromEntries(categories.map(c => [c.id, c.category_data.name]));
+          
+          // Debug: Log all category names to help with matching
+          console.log("Available categories:", Object.values(nameById));
+          console.log("Looking for category:", SHOP_CATEGORY_NAMES);
+          const normalizedCategories = Object.values(nameById).map(n => ({ original: n, normalized: normalize(n) }));
+          console.log("Normalized categories:", normalizedCategories);
 
           // Filter items for shop (you can customize this logic)
           items = itemsRaw.filter(it=>{
@@ -839,10 +847,14 @@
                 console.log(`Item ${it.item_data?.name} filtered: category "${nameById[cid]}" is excluded`);
                 return false;
               }
-              // Only show items in "Stuck on set" category
+              // Only show items in "Stuck on set" category (unless debug mode)
               if(shopSet.size > 0 && !shopSet.has(norm)) {
-                console.log(`Item ${it.item_data?.name} filtered: not in "Stuck on set" category`);
-                return false;
+                if (!DEBUG_SHOW_ALL_CATEGORIES) {
+                  console.log(`Item ${it.item_data?.name} filtered: not in "Stuck on set" category (category: "${nameById[cid]}", normalized: "${norm}")`);
+                  return false;
+                } else {
+                  console.log(`DEBUG: Including item ${it.item_data?.name} from category "${nameById[cid]}" (would normally be filtered)`);
+                }
               }
             } else {
               // Items without a category are excluded
@@ -871,8 +883,17 @@
           
           console.log(`After filtering: ${items.length} items remain (from ${itemsRaw.length} raw items)`);
           if (items.length === 0 && itemsRaw.length > 0) {
-            console.warn("All items were filtered out! Check filtering logic.");
+            console.warn("⚠️ All items were filtered out! Check filtering logic.");
             console.log("Sample raw item:", itemsRaw[0]);
+            console.log("Sample item category:", itemsRaw[0]?.item_data?.category_id ? nameById[itemsRaw[0].item_data.category_id] : "No category");
+            // Show a helpful message in the UI
+            if ($grid) {
+              $grid.innerHTML = `<div style='padding: 2rem; text-align: center; color: #666;'>
+                <p><strong>No items found in "Stuck on set" category.</strong></p>
+                <p style='font-size: 14px; margin-top: 1rem;'>Available categories: ${Object.values(nameById).join(", ")}</p>
+                <p style='font-size: 12px; margin-top: 0.5rem; color: #999;'>Check the browser console for detailed filtering information.</p>
+              </div>`;
+            }
           }
 
           // Load inventory for all variations

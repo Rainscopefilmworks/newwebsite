@@ -992,11 +992,11 @@
                     <input id="phone" placeholder="Phone (optional)" />
                     <div class="rs-row2">
                       <div class="rs-field">
-                        <label class="rs-label">Start date *</label>
+                        <label class="rs-label">Pickup date *</label>
                         <input id="start" type="date" />
                       </div>
                       <div class="rs-field">
-                        <label class="rs-label">End date *</label>
+                        <label class="rs-label">Dropoff date *</label>
                         <input id="end" type="date" />
                       </div>
                     </div>
@@ -1201,7 +1201,14 @@
       const MS=86400000;
       const toISO = d => d.toISOString().slice(0,10);
       const parseDate = v => { const d=new Date(v); return isNaN(d)?null:d; };
-      const dayDiff = (a,b)=>{ const da=new Date(a.getFullYear(),a.getMonth(),a.getDate()); const db=new Date(b.getFullYear(),b.getMonth(),b.getDate()); return Math.max(1, Math.round((db-da)/MS)||1); };
+      // Calculate days in between pickup and dropoff (excluding pickup and dropoff days)
+      const dayDiff = (a,b)=>{ 
+        const da=new Date(a.getFullYear(),a.getMonth(),a.getDate()); 
+        const db=new Date(b.getFullYear(),b.getMonth(),b.getDate()); 
+        const daysBetween = Math.round((db-da)/MS);
+        // Subtract 1 to exclude pickup and dropoff days, minimum 0
+        return Math.max(0, daysBetween - 1);
+      };
       const getDays = ()=>{ const s=parseDate(document.getElementById("start").value); const e=parseDate(document.getElementById("end").value); if(!s||!e) return 0; return dayDiff(s,e); };
 
       // >>> NEW: billable days with 4-day weekly cap
@@ -1239,7 +1246,7 @@
         const daysActual = getDays();
         const daysBill   = billableDays(daysActual);
         const perDay = cart.reduce((sum,l)=> sum + priceNum(l.priceMoney) * Math.max(1,parseInt(l.qty||"1",10)), 0);
-        $days.textContent   = daysActual ? `${daysActual} (billed ${daysBill})` : "—";
+        $days.textContent   = daysActual >= 0 ? `${daysActual} (billed ${daysBill})` : "—";
         $subDay.textContent = perDay ? money(perDay) : "—";
         $total.textContent  = (perDay && daysBill) ? money(perDay * daysBill) : "—";
       }
@@ -1527,8 +1534,8 @@
 
         if (!given_name || !email_address) { alert("First name and email are required."); return; }
         if (!cart.length)                  { alert("Add at least one item."); return; }
-        if (!startStr || !endStr)          { alert("Choose start and end dates."); return; }
-        if (startStr > endStr)             { alert("End date must be on/after start date."); return; }
+        if (!startStr || !endStr)          { alert("Choose pickup and dropoff dates."); return; }
+        if (startStr > endStr)             { alert("Dropoff date must be on/after pickup date."); return; }
 
         // ensure yyyy-mm-dd (type="date" already provides this in most browsers)
         startStr = startStr.slice(0, 10);
@@ -1547,9 +1554,14 @@
           return;
         }
 
-        // >>> UPDATED: use billed days
-        const daysActual = Math.max(1, getDays());
-        const daysBill   = billableDays(daysActual);
+        // >>> UPDATED: use billed days (days in between pickup and dropoff)
+        const daysActual = getDays();
+        if (daysActual < 0) {
+          alert("Invalid date range. Dropoff date must be after pickup date.");
+          setStatus("");
+          return;
+        }
+        const daysBill = billableDays(daysActual);
 
         const line_items = cart.flatMap(l => {
           const units = Math.max(1, parseInt(l.qty || "1", 10));
@@ -1557,8 +1569,8 @@
           return Array.from({ length: units }, () => base);
         });
 
-        // >>> UPDATED: note shows both actual and billed
-        const note = `Rental dates: ${startStr} → ${endStr} (${daysActual} day${daysActual > 1 ? 's' : ''}, billed ${daysBill}). ${noteExtra || ""}`.trim();
+        // >>> UPDATED: note shows pickup/dropoff dates and days in between
+        const note = `Rental: Pickup ${startStr}, Dropoff ${endStr} (${daysActual} day${daysActual !== 1 ? 's' : ''} in between, billed ${daysBill}). ${noteExtra || ""}`.trim();
 
         setStatus("Submitting estimate…");
         const res = await fetch(`${PROXY_BASE}/api/estimate`, {

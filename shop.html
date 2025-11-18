@@ -43,6 +43,13 @@
     
     <link rel="stylesheet" href="assets/css/styles.css">
     
+    <!-- Disable Cloudflare Rocket Loader for this page -->
+    <meta name="cf-2fa-verify" content="">
+    <script>
+      // Disable Rocket Loader
+      window._cf_chl_opt = { cv: '1' };
+    </script>
+    
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-7RRQQ33JKM"></script>
     <script>
@@ -586,8 +593,27 @@
 
     <script src="assets/js/script.js" data-cfasync="false"></script>
     
-    <!-- Square Web Payments SDK - Disable Rocket Loader to prevent interference -->
-    <script type="text/javascript" src="https://js.squareup.com/v2/paymentform" data-cfasync="false" onload="window.squareScriptLoaded = true"></script>
+    <!-- Square Web Payments SDK - Load dynamically to avoid Rocket Loader -->
+    <script data-cfasync="false">
+      // Load Square script dynamically
+      (function() {
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://js.squareup.com/v2/paymentform';
+        script.setAttribute('data-cfasync', 'false');
+        script.onload = function() {
+          window.squareScriptLoaded = true;
+          if (typeof window.onSquareScriptLoaded === 'function') {
+            window.onSquareScriptLoaded();
+          }
+        };
+        script.onerror = function() {
+          console.error('Failed to load Square Web Payments SDK');
+          window.squareScriptLoadError = true;
+        };
+        document.head.appendChild(script);
+      })();
+    </script>
     
     <script>
     // Wait for DOM to be fully ready, then initialize
@@ -597,9 +623,9 @@
         await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
       }
       
-      // Wait for Square script to load
+      // Wait for Square script to load with longer timeout
       let squareLoadAttempts = 0;
-      const maxAttempts = 20; // 2 seconds total
+      const maxAttempts = 50; // 5 seconds total (in case of slow connection)
       while (typeof SqPaymentForm === 'undefined' && squareLoadAttempts < maxAttempts) {
         await new Promise(resolve => setTimeout(resolve, 100));
         squareLoadAttempts++;
@@ -662,12 +688,21 @@
       // ============================================
       const APPLICATION_ID = "sq0idp-Q4C4Lb_w5aFXTJuE_2ebgg"; // Square Application ID
       
+      // Initialize Square payment form (after waiting for script above)
       if (APPLICATION_ID) {
-        // Square script should be loaded by now (we waited above)
         if (typeof SqPaymentForm !== 'undefined') {
-          initializeSquarePayments();
+          try {
+            initializeSquarePayments();
+          } catch (sqError) {
+            console.error("Error initializing Square payment form:", sqError);
+            if ($cardContainer) {
+              $cardContainer.innerHTML = "<p style='color:#ef4444;font-size:12px;'>Payment form initialization failed. Please refresh the page.</p>";
+            }
+          }
         } else {
-          console.error("Square Web Payments SDK failed to load. Payment form will not work.");
+          console.error("Square Web Payments SDK not available. Payment form will not work.");
+          console.log("Square script loaded:", window.squareScriptLoaded);
+          console.log("SqPaymentForm type:", typeof SqPaymentForm);
           if ($cardContainer) {
             $cardContainer.innerHTML = "<p style='color:#ef4444;font-size:12px;'>Payment form failed to load. Please check your internet connection and refresh the page.</p>";
           }

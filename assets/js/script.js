@@ -1,64 +1,79 @@
 // Testimonials Slider
 document.addEventListener('DOMContentLoaded', function() {
-    const slides = document.querySelectorAll('.testimonial-slide');
-    const indicators = document.querySelectorAll('.indicator');
-    
-    // Only initialize slider if slides exist
-    if (slides.length === 0) {
-        return; // Exit early if no testimonials on this page
-    }
-    
-    let currentSlide = 0;
-    let slideInterval;
-
-    function showSlide(index) {
-        slides.forEach(slide => slide.classList.remove('active'));
-        indicators.forEach(indicator => indicator.classList.remove('active'));
+    try {
+        const slides = document.querySelectorAll('.testimonial-slide');
+        const indicators = document.querySelectorAll('.indicator');
         
-        if (slides[index]) {
-            slides[index].classList.add('active');
+        // Only initialize slider if slides exist
+        if (!slides || slides.length === 0) {
+            return; // Exit early if no testimonials on this page
         }
-        if (indicators[index]) {
-            indicators[index].classList.add('active');
-        }
-    }
+        
+        let currentSlide = 0;
+        let slideInterval;
 
-    function nextSlide() {
-        currentSlide = (currentSlide + 1) % slides.length;
-        showSlide(currentSlide);
-    }
-
-    function startSlider() {
-        slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
-    }
-
-    function stopSlider() {
-        clearInterval(slideInterval);
-    }
-
-    // Indicator click handlers
-    if (indicators && indicators.length > 0) {
-        indicators.forEach((indicator, index) => {
-            if (indicator) {
-                indicator.addEventListener('click', () => {
-                    currentSlide = index;
-                    showSlide(currentSlide);
-                    stopSlider();
-                    startSlider();
-                });
+        function showSlide(index) {
+            if (!slides || !indicators) return;
+            slides.forEach(slide => {
+                if (slide) slide.classList.remove('active');
+            });
+            indicators.forEach(indicator => {
+                if (indicator) indicator.classList.remove('active');
+            });
+            
+            if (slides[index]) {
+                slides[index].classList.add('active');
             }
-        });
-    }
+            if (indicators[index]) {
+                indicators[index].classList.add('active');
+            }
+        }
 
-    // Pause on hover
-    const testimonialsSection = document.querySelector('.testimonials');
-    if (testimonialsSection) {
-        testimonialsSection.addEventListener('mouseenter', stopSlider);
-        testimonialsSection.addEventListener('mouseleave', startSlider);
-    }
+        function nextSlide() {
+            if (!slides || slides.length === 0) return;
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
 
-    // Start the slider
-    startSlider();
+        function startSlider() {
+            if (slides && slides.length > 0) {
+                slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+            }
+        }
+
+        function stopSlider() {
+            if (slideInterval) {
+                clearInterval(slideInterval);
+            }
+        }
+
+        // Indicator click handlers
+        if (indicators && indicators.length > 0) {
+            indicators.forEach((indicator, index) => {
+                if (indicator && typeof indicator.addEventListener === 'function') {
+                    indicator.addEventListener('click', () => {
+                        currentSlide = index;
+                        showSlide(currentSlide);
+                        stopSlider();
+                        startSlider();
+                    });
+                }
+            });
+        }
+
+        // Pause on hover
+        const testimonialsSection = document.querySelector('.testimonials');
+        if (testimonialsSection && typeof testimonialsSection.addEventListener === 'function') {
+            testimonialsSection.addEventListener('mouseenter', stopSlider);
+            testimonialsSection.addEventListener('mouseleave', startSlider);
+        }
+
+        // Start the slider
+        startSlider();
+    } catch (error) {
+        // Silently fail if testimonials slider can't initialize (e.g., on shop page)
+        console.debug('Testimonials slider not available on this page:', error);
+    }
 });
 
 // Accordion functionality
